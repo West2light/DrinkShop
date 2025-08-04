@@ -3,8 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { Cart } from "@/types/cart.type";
 import { useCart } from "@/hooks/useCart";
-
-const userId = 2; // Sau này lấy từ AuthContext hoặc session...
+import { useUser } from "./UserContext";
 
 interface CartContextType {
   cart: Cart | null;
@@ -16,6 +15,8 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useUser();
+  const userId = user?.id || "";
   const { cart: fetchedCart, setCart } = useCart(userId);
   const [cart, setCartState] = useState<Cart | null>(null);
   const [isChange, setIsChange] = useState(false);
@@ -23,6 +24,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (fetchedCart) {
       setCartState(fetchedCart);
+    } else {
+      setCartState(null);
     }
   }, [fetchedCart]);
 

@@ -3,8 +3,9 @@ import axios, {
   InternalAxiosRequestConfig,
   AxiosResponse,
 } from "axios";
+import { getToken } from "@/lib/utils";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_ENDPOINT;
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE;
 
 // Create public axios instance (no auth required)
 export const publicApi = axios.create({
@@ -20,22 +21,18 @@ export const privateApi = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // Enable sending cookies
 });
 
 // Add request interceptor to private instance to handle auth
 privateApi.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Get session from cookie
-    const session = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("user_session="));
+    // Get user data from token
+    const userData = getToken();
 
-    if (session) {
-      const sessionData = JSON.parse(session.split("=")[1]);
+    if (userData) {
       // Add user info to request headers
-      config.headers["X-User-Id"] = sessionData.id;
-      config.headers["X-User-Role"] = sessionData.role;
+      config.headers["X-User-Id"] = userData.id;
+      config.headers["X-User-Role"] = userData.role;
     }
     return config;
   },
@@ -67,17 +64,28 @@ const errorInterceptor = (error: AxiosError) => {
   }
 };
 
-publicApi.interceptors.response.use(responseInterceptor, errorInterceptor);
-privateApi.interceptors.response.use(responseInterceptor, errorInterceptor);
-
-// Add response interceptor to private instance to handle auth errors
-privateApi.interceptors.response.use(
-  (response) => response,
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      // Redirect to login page if unauthorized
-      window.location.href = "/login";
-    }
-    return Promise.reject(error);
+// Enhanced error interceptor for private API to handle auth errors
+const privateErrorInterceptor = (error: AxiosError) => {
+  if (error.response?.status === 401) {
+    // Redirect to login page if unauthorized
+    window.location.href = "/login";
   }
+
+  // Use the same error handling as the general interceptor
+  if (error.response) {
+    console.error("Response Error:", error.response.data);
+    return Promise.reject(error.response.data);
+  } else if (error.request) {
+    console.error("Request Error:", error.request);
+    return Promise.reject({ message: "No response from server" });
+  } else {
+    console.error("Error:", error.message);
+    return Promise.reject({ message: "Request failed" });
+  }
+};
+
+publicApi.interceptors.response.use(responseInterceptor, errorInterceptor);
+privateApi.interceptors.response.use(
+  responseInterceptor,
+  privateErrorInterceptor
 );

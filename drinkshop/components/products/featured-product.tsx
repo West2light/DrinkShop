@@ -3,6 +3,20 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { FeaturedProduct as FeaturedProductType } from "@/lib/api"
+import { ShoppingCart } from "lucide-react"
+
+interface CountdownItemProps {
+  value: number
+  label: string
+}
+
+// Component nhỏ để hiển thị từng mục trong countdown
+const CountdownItem = ({ value, label }: CountdownItemProps) => (
+  <div>
+    <div className="font-bold text-yellow-600 text-base lg:text-lg">{value}</div>
+    <div className="text-gray-600">{label}</div>
+  </div>
+)
 
 interface FeaturedProductProps {
   product: FeaturedProductType
@@ -26,25 +40,16 @@ export default function FeaturedProduct({ product }: FeaturedProductProps) {
         {product.originalPrice && <span className="text-sm text-gray-500 line-through">{product.originalPrice}đ</span>}
       </div>
       <Link href={`/products/${product.id}`}>
-        <Button className="bg-black text-white hover:bg-gray-800 w-full mb-4 text-sm lg:text-base">ADD TO CART</Button>
+        <Button className="bg-black text-white hover:bg-gray-800 w-full mb-4 text-sm lg:text-base">
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          THÊM VÀO GIỎ
+        </Button>
       </Link>
       <div className="grid grid-cols-4 gap-1 lg:gap-2 text-center text-xs lg:text-sm">
-        <div>
-          <div className="font-bold text-yellow-600 text-base lg:text-lg">{product.countdown.days}</div>
-          <div className="text-gray-600">DAYS</div>
-        </div>
-        <div>
-          <div className="font-bold text-yellow-600 text-base lg:text-lg">{product.countdown.hours}</div>
-          <div className="text-gray-600">HOURS</div>
-        </div>
-        <div>
-          <div className="font-bold text-yellow-600 text-base lg:text-lg">{product.countdown.minutes}</div>
-          <div className="text-gray-600">MINS</div>
-        </div>
-        <div>
-          <div className="font-bold text-yellow-600 text-base lg:text-lg">{product.countdown.seconds}</div>
-          <div className="text-gray-600">SECS</div>
-        </div>
+        <CountdownItem value={product.countdown.days} label="DAYS" />
+        <CountdownItem value={product.countdown.hours} label="HOURS" />
+        <CountdownItem value={product.countdown.minutes} label="MINS" />
+        <CountdownItem value={product.countdown.seconds} label="SECS" />
       </div>
     </div>
   )

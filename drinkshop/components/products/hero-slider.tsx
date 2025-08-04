@@ -1,6 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious
+} from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getSlides, type Slide } from "@/lib/api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -13,6 +20,7 @@ export default function HeroSlider() {
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [api, setApi] = useState<any>(null);
 
     // Fetch slides data
     useEffect(() => {
@@ -33,27 +41,37 @@ export default function HeroSlider() {
         fetchSlides();
     }, []);
 
+    // Update current slide when API changes slide
+    useEffect(() => {
+        if (!api) {
+            return;
+        }
+
+        const onSelect = () => {
+            setCurrentSlide(api.selectedScrollSnap());
+        };
+
+        api.on("select", onSelect);
+        return () => {
+            api.off("select", onSelect);
+        };
+    }, [api]);
+
     // Auto-play functionality
     useEffect(() => {
-        if (!isAutoPlaying || slides.length === 0) return;
+        if (!isAutoPlaying || !api || slides.length === 0) return;
 
         const interval = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % slides.length);
+            api.scrollNext();
         }, 5000);
 
         return () => clearInterval(interval);
-    }, [isAutoPlaying, slides.length]);
+    }, [isAutoPlaying, slides.length, api]);
 
     const goToSlide = (index: number) => {
-        setCurrentSlide(index);
-    };
-
-    const goToPrevious = () => {
-        setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-    };
-
-    const goToNext = () => {
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
+        if (api) {
+            api.scrollTo(index);
+        }
     };
 
     // Loading state
@@ -94,85 +112,92 @@ export default function HeroSlider() {
     }
 
     return (
-        <div
-            className="relative w-full h-[70vh] md:h-[80vh] lg:h-screen overflow-hidden"
+        <Carousel
+            className="w-full h-[70vh] md:h-[80vh] lg:h-screen"
+            opts={{
+                loop: true,
+                align: "start",
+                skipSnaps: false,
+                inViewThreshold: 0,
+                dragFree: false,
+                duration: 25,
+            }}
             onMouseEnter={() => setIsAutoPlaying(false)}
             onMouseLeave={() => setIsAutoPlaying(true)}
+            setApi={setApi}
         >
-            {/* Slides */}
-            <div className="relative h-full">
-                {slides.map((slide, index) => (
-                    <div
-                        key={slide.id}
-                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                            index === currentSlide ? "opacity-100" : "opacity-0"
-                        }`}
-                    >
-                        <Image
-                            src={slide.image || "/placeholder.svg"}
-                            alt={slide.title}
-                            fill
-                            priority={index === 0}
-                            className="object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/50 hidden" />
-                        <div className="relative z-10 flex items-center justify-center h-full text-center text-white">
-                            <div className="max-w-4xl px-4">
-                                <div className="mb-6 lg:mb-8">
-                                    <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-serif italic mb-4 animate-fade-in-up">
-                                        {slide.title}
-                                    </h1>
-                                    <h2 className="text-base sm:text-lg md:text-xl lg:text-3xl font-serif italic animate-fade-in-up animation-delay-300">
-                                        {slide.subtitle}
-                                    </h2>
-                                    <div className="mt-6 lg:mt-8 animate-fade-in-up animation-delay-600">
-                                        <Button
-                                            className="bg-yellow-600 hover:bg-yellow-700 text-black font-bold px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 text-sm sm:text-base md:text-lg transition-all duration-300 hover:scale-105"
-                                            asChild
-                                        >
-                                            <a href={slide.buttonLink}>
-                                                {slide.buttonText}
-                                            </a>
-                                        </Button>
+            <CarouselContent>
+                {slides.map((slide: Slide) => (
+                    <CarouselItem key={slide.id} className="relative h-full">
+                        <div className="relative w-full h-[70vh] md:h-[80vh] lg:h-screen">
+                            <Image
+                                src={slide.image || "/placeholder.svg"}
+                                alt={slide.title}
+                                fill
+                                priority={slide.id === slides[0].id}
+                                className="object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/30" />
+                            <div className="relative z-10 flex items-center justify-center h-full text-center text-white">
+                                <div className="max-w-4xl px-4">
+                                    <div className="mb-6 lg:mb-8">
+                                        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-serif italic mb-4 animate-fade-in-up">
+                                            {slide.title}
+                                        </h1>
+                                        <h2 className="text-base sm:text-lg md:text-xl lg:text-3xl font-serif italic animate-fade-in-up animation-delay-300">
+                                            {slide.subtitle}
+                                        </h2>
+                                        <div className="mt-6 lg:mt-8 animate-fade-in-up animation-delay-600">
+                                            <Button
+                                                className="bg-yellow-600 hover:bg-yellow-700 text-black font-bold px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 text-sm sm:text-base md:text-lg transition-all duration-300 hover:scale-105"
+                                                asChild
+                                            >
+                                                <a href={slide.buttonLink}>
+                                                    {slide.buttonText}
+                                                </a>
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </CarouselItem>
                 ))}
+            </CarouselContent>
+
+            {/* Custom Navigation Arrows */}
+            <div className="absolute left-4 md:left-8 top-1/2 transform -translate-y-1/2 z-20">
+                <CarouselPrevious
+                    variant="outline"
+                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border-none h-10 w-10 md:h-12 md:w-12 text-white"
+                >
+                    <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
+                </CarouselPrevious>
             </div>
 
-            {/* Navigation Arrows */}
-            <button
-                onClick={goToPrevious}
-                className="absolute left-4 md:left-8 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 md:p-3 transition-all duration-300 hover:scale-110"
-                aria-label="Previous slide"
-            >
-                <ChevronLeft className="w-6 h-6 md:w-8 md:h-8 text-white" />
-            </button>
-            <button
-                onClick={goToNext}
-                className="absolute right-4 md:right-8 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 md:p-3 transition-all duration-300 hover:scale-110"
-                aria-label="Next slide"
-            >
-                <ChevronRight className="w-6 h-6 md:w-8 md:h-8 text-white" />
-            </button>
+            <div className="absolute right-4 md:right-8 top-1/2 transform -translate-y-1/2 z-20">
+                <CarouselNext
+                    variant="outline"
+                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border-none h-10 w-10 md:h-12 md:w-12 text-white"
+                >
+                    <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
+                </CarouselNext>
+            </div>
 
-            {/* Dots Indicator */}
+            {/* Custom Dots Indicator */}
             <div className="absolute bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
-                {slides.map((slide, index) => (
+                {slides.map((slide: Slide, index: number) => (
                     <button
                         key={slide.id}
                         onClick={() => goToSlide(index)}
-                        className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 ${
-                            index === currentSlide
+                        className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 ${index === currentSlide
                                 ? "bg-yellow-600 scale-125"
                                 : "bg-white/50 hover:bg-white/75"
-                        }`}
+                            }`}
                         aria-label={`Go to slide ${index + 1}`}
                     />
                 ))}
             </div>
-        </div>
+        </Carousel>
     );
 }

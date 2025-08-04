@@ -16,23 +16,57 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Trash2 } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/confirmdialog/ConfirmDialog";
-
+import { useRouter } from "next/navigation";
+import { formatCurrency } from "@/ultis/format.currency";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 const CartPage = () => {
-  const userId = 2; // Sau này lấy từ AuthContext
+  const router = useRouter();
   const { cart, setCart, isChange, setIsChange } = useCartContext();
-  //nếu người dùng thay đổi giỏ hàng mà không ấn cập nhật thì sẽ có cảnh báo khi chuyển tab
+  const ready = useRequireAuth();
+
+  const cartLabel = useMemo(
+    () => [
+      { label: "ẢNH" },
+      { label: "TÊN SẢN PHẨM" },
+      { label: "GIÁ" },
+      { label: "SỐ LƯỢNG" },
+      { label: "TỔNG TIỀN" },
+      { label: "XÓA" },
+    ],
+    []
+  );
+
   useEffect(() => {
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isChange) {
         e.preventDefault();
+        e.returnValue = "";
       }
     };
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
   }, [isChange]);
+
+  useEffect(() => {
+    if (!cart) return;
+    const totalPrice = cart.items.reduce((sum, item) => {
+      return item.product ? sum + item.quantity * item.product.price : sum;
+    }, 0);
+    setCart({ ...cart, totalPrice });
+  }, [cart?.items, setCart]);
 
   const handleQuantityChange = (index: number, newQuantity: number) => {
     if (!cart) return;
@@ -67,21 +101,14 @@ const CartPage = () => {
       return;
     }
 
-    const totalPrice = cart.items.reduce((sum, item) => {
-      if (!item.product) return sum;
-      return sum + item.quantity * item.product.price;
-    }, 0);
-
     const updatedCart = {
       ...cart,
-      userId,
-      totalPrice,
       updatedAt: new Date().toISOString(),
     };
 
     try {
       await axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/carts/${cart.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE}/carts/${cart.id}`,
         updatedCart
       );
       toast.success("Cập nhật giỏ hàng thành công");
@@ -89,23 +116,18 @@ const CartPage = () => {
     } catch (error) {
       toast.error("Có lỗi xảy ra khi cập nhật giỏ hàng");
       console.error(error);
+      throw error;
     }
   };
 
-  const cartLabel = useMemo(
-    () => [
-      { label: "ẢNH" },
-      { label: "TÊN SẢN PHẨM" },
-      { label: "GIÁ" },
-      { label: "SỐ LƯỢNG" },
-      { label: "TỔNG TIỀN" },
-      { label: "XÓA" },
-    ],
-    []
-  );
+  const handleConfirmOrder = async () => {
+    if (isChange) await handleSaveCart();
+    router.push("/cart/checkout");
+  };
+
+  if (!ready) return null;
   return (
     <div className="py-6">
-      <Toaster position="top-right" richColors />
       <BreadcrumbComponent
         items={[{ label: "Trang chủ", href: "/" }, { label: "Giỏ hàng" }]}
       />
@@ -125,7 +147,7 @@ const CartPage = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {cart?.items.length === 0 ? (
+          {!cart || cart?.items.length === 0 ? (
             <TableRow>
               <TableCell colSpan={cartLabel.length} className="text-center">
                 Giỏ hàng của bạn đang trống
@@ -147,14 +169,14 @@ const CartPage = () => {
                   {cartItem.product?.name}
                 </TableCell>
                 <TableCell className="text-center">
-                  {cartItem.product?.price.toLocaleString("vi-VN") + "đ"}
+                  {formatCurrency(cartItem.product?.price) || "0 đ"}
                 </TableCell>
                 <TableCell>
                   <Input
                     type="number"
                     value={cartItem.quantity}
                     min={1}
-                    className="w-20 text-center flex justify-self-center"
+                    className="w-20 text-center"
                     onChange={(e) => {
                       const newQuantity = parseInt(e.target.value);
                       if (!isNaN(newQuantity) && newQuantity > 0) {
@@ -165,9 +187,7 @@ const CartPage = () => {
                 </TableCell>
                 <TableCell className="text-center">
                   {cartItem.product?.price
-                    ? (
-                        cartItem.product.price * cartItem.quantity
-                      ).toLocaleString("vi-VN") + "đ"
+                    ? formatCurrency(cartItem.product.price * cartItem.quantity)
                     : 0}
                 </TableCell>
                 <TableCell className="text-center">
@@ -191,9 +211,11 @@ const CartPage = () => {
       </Table>
 
       <div className="flex justify-end items-center gap-4 mt-6">
-        <Button className="cursor-pointer bg-black hover:bg-gray-800">
-          <Link href="/">Tiếp tục mua hàng</Link>
-        </Button>
+        <Link href="/">
+          <Button className="cursor-pointer bg-black hover:bg-gray-800">
+            Tiếp tục mua hàng
+          </Button>
+        </Link>
         <ConfirmDialog
           trigger={
             <Button
@@ -216,6 +238,40 @@ const CartPage = () => {
         >
           Cập nhật
         </Button>
+        <Drawer>
+          <DrawerTrigger asChild>
+            <Button
+              disabled={cart?.items.length === 0}
+              variant="outline"
+              className="cursor-pointer bg-black hover:bg-gray-800 text-white hover:text-white"
+            >
+              Tiến hành đặt hàng
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <div className="max-w-md mx-auto">
+              <DrawerHeader>
+                <DrawerTitle>Xác nhận đơn hàng</DrawerTitle>
+                <DrawerDescription>
+                  Bạn có chắc chắn muốn đặt hàng với các sản phẩm đã chọn?
+                  <br />
+                  <strong>Tổng tiền:</strong> {formatCurrency(cart?.totalPrice)}
+                </DrawerDescription>
+              </DrawerHeader>
+              <DrawerFooter>
+                <Button
+                  className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-md text-center"
+                  onClick={handleConfirmOrder}
+                >
+                  Xác nhận đặt hàng
+                </Button>
+                <DrawerClose asChild>
+                  <Button variant="outline">Đóng</Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </div>
+          </DrawerContent>
+        </Drawer>
       </div>
     </div>
   );

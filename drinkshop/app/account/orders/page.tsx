@@ -8,36 +8,50 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
-import { useState, useMemo } from "react";
 import Image from "next/image";
-import { MapPin, Phone, User } from "lucide-react";
-import { useUser } from "@/hooks/useUser";
-import { useOrders } from "@/hooks/useOrders";
-import { useAddress } from "@/hooks/useAddress";
-import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent";
 import titleleftdark from "@/public/Image_Rudu/titleleft-dark.png";
+import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent";
+import { useState, useMemo } from "react";
+import { useUser as useUserContext } from "@/contexts/UserContext";
+import { MapPin, Phone, User } from "lucide-react";
+import { formatCurrency } from "@/ultis/format.currency";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { OrderStatus } from "@/types/order.types";
+import { useAddress } from "@/hooks/useAddressByUser";
+import { useOrders } from "@/hooks/useOrders";
+import { useUser } from "@/hooks/useUser";
 
 const OrdersPage = () => {
-  const userId = 2; // Thay thế bằng cách lấy userId thực tế Giả sử lấy được userId từ session hoặc context
+  const ready = useRequireAuth();
+  const { user: currentUser } = useUserContext();
+  const userId = currentUser?.id || "";
 
   const [status, setStatus] = useState<string>("all");
 
   const user = useUser(userId);
   const orders = useOrders(userId);
-  const address = useAddress(userId);
+  const { address } = useAddress(userId);
 
   const customerInfo = [
     {
       icon: <User className="w-6 h-6 text-[var(--foreground)]" />,
-      content: [user?.username ?? "Name", user?.email ?? "Email"],
+      content: [
+        user?.firstName ?? "First Name" + " " + user?.lastName ?? "Last Name",
+        user?.email ?? "Email",
+      ],
     },
     {
       icon: <MapPin className="w-6 h-6 text-[var(--foreground)]" />,
-      content: [address || "Address"],
+      content: [
+        address?.address ??
+          "Chưa có địa chỉ" + ", " + address?.city ??
+          "" + ", " + address?.country ??
+          "",
+      ],
     },
     {
       icon: <Phone className="w-6 h-6 text-[var(--foreground)]" />,
-      content: [user?.phone ?? "Phone"],
+      content: [address?.phone ?? "Chưa có số điện thoại"],
     },
   ];
   const tableHeaders = [
@@ -51,19 +65,19 @@ const OrdersPage = () => {
   ];
   const statusMap: Record<string, string> = {
     all: "Tất cả",
-    pending: "Đã đặt, chưa duyệt",
-    confirmed: "Đã duyệt",
-    delivering: "Đang giao",
-    completed: "Đã hoàn thành",
-    canceled: "Đã hủy",
+    pending: OrderStatus.PENDING,
+    approved: OrderStatus.APPROVED,
+    shipping: OrderStatus.SHIPPING,
+    completed: OrderStatus.COMPLETED,
+    canceled: OrderStatus.CANCELED,
   };
 
   const statusCount = useMemo(() => {
     const count: Record<string, number> = {
       all: orders.length,
       pending: 0,
-      confirmed: 0,
-      delivering: 0,
+      approved: 0,
+      shipping: 0,
       completed: 0,
       canceled: 0,
     };
@@ -83,7 +97,7 @@ const OrdersPage = () => {
       (order) => status === "all" || order.status === statusMap[status]
     );
   }, [orders, status]);
-
+  if (!ready) return null;
   return (
     <div className="py-6">
       <BreadcrumbComponent
@@ -163,7 +177,7 @@ const OrdersPage = () => {
                       {order.totalItem}
                     </TableCell>
                     <TableCell className="text-center">
-                      {order.totalPrice.toLocaleString("vi-VN")}đ
+                      {formatCurrency(order.totalPrice)}
                     </TableCell>
                     <TableCell className="text-center">
                       {order.status}

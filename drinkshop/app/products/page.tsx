@@ -10,7 +10,15 @@ import { Grid, List } from "lucide-react"
 import ProductCard from "@/components/products/product-card"
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent"
 import { products } from "@/lib/products"
-
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 export default function ProductsPage() {
   const searchParams = useSearchParams()
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -211,24 +219,26 @@ export default function ProductsPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex justify-center mt-8">
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" disabled className="hidden sm:inline-flex bg-transparent">
-                  Trước
-                </Button>
-                <Button variant="default" size="sm">
-                  1
-                </Button>
-                <Button variant="outline" size="sm" className="bg-transparent">
-                  2
-                </Button>
-                <Button variant="outline" size="sm" className="hidden sm:inline-flex bg-transparent">
-                  3
-                </Button>
-                <Button variant="outline" size="sm" className="hidden sm:inline-flex bg-transparent">
-                  Sau
-                </Button>
-              </div>
+            <div className="mt-8 lg:mt-12 mb-8">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious href="#" className="hidden sm:flex" />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#" isActive>1</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">2</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#" className="hidden sm:flex">3</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext href="#" className="hidden sm:flex" />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
         </div>

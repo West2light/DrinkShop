@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { User, UserResponse, UserWithoutPassword } from "@/types/user.types";
 import { useUser } from "@/contexts/UserContext";
 import { removeToken, setToken } from "@/lib/utils";
+import { addCart } from "@/ultis/api/cart.api";
 
 interface RegisterData {
   email: string;
@@ -52,7 +53,8 @@ export const useAuth = (): UseAuth => {
         throw new Error(result.message || "Registration failed");
       }
 
-      // Redirect to login page after successful registration
+      // Redirect to login page , create cart then redirect login
+      addCart(result.data.id);
       router.push("/login");
     } catch (err: any) {
       const message = err.message || "Registration failed";

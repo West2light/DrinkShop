@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Heart, Share2, ShoppingCart, Plus, Minus } from "lucide-react"
 
 import { getProductById, getAllProducts, getBestSellers } from "@/lib/api"
+import type { Product } from "@/lib/api"
 import ProductCard from "@/components/products/product-card"
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent"
 
@@ -25,10 +26,23 @@ export async function generateStaticParams() {
 export default async function ProductDetailPage({ params }: { params: { id: string } }) {
     try {
         // Fetch product data
-        const product = await getProductById(Number.parseInt(params.id))
+        let product;
+        try {
+            product = await getProductById(Number.parseInt(params.id))
+        } catch (productError) {
+            console.error("Lỗi khi lấy thông tin sản phẩm:", productError)
+            notFound()
+            return
+        }
 
         // Fetch related products
-        const relatedProducts = await getBestSellers()
+        let relatedProducts: Product[] = []
+        try {
+            relatedProducts = await getBestSellers()
+        } catch (relatedError) {
+            console.error("Lỗi khi lấy sản phẩm liên quan:", relatedError)
+            // Tiếp tục với mảng rỗng nếu không lấy được sản phẩm liên quan
+        }
 
         return (
             <div className="min-h-screen bg-white">

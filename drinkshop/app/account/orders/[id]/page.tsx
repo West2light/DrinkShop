@@ -1,24 +1,36 @@
 "use client";
 
-import { useMemo } from "react";
-import { useOrder } from "@/hooks/useOrder";
-import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent";
 import Image from "next/image";
+import ModalReview from "@/components/review/ModalReview";
 import titleleftdark from "@/public/Image_Rudu/titleleft-dark.png";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent";
+import OrderTable, {
+  headers,
+  ProductItem,
+} from "@/components/ordertable/OrderTable";
+import { useEffect, useState, useMemo, use } from "react";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { setStatusCancelOrder } from "@/ultis/api/order.api";
+import { TableCell, TableRow } from "@/components/ui/table";
 import { useOrderDetails } from "@/hooks/useOrderDetails";
+import { ConfirmDialog } from "@/components/confirmdialog/ConfirmDialog";
+import { formatCurrency } from "@/ultis/format.currency";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { OrderStatus } from "@/types/order.types";
+import { useOrder } from "@/hooks/useOrder";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import Link from "next/dist/client/link";
 
-const OrderDetailPage = ({ params }: { params: { id: string } }) => {
-  const orderId = parseInt(params.id);
-  const order = useOrder(orderId);
-  const orderDetailsWithProducts = useOrderDetails(orderId);
+const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = use(params);
+  const order = useOrder(id);
+  const orderDetails = useOrderDetails(id);
+  const [status, setStatus] = useState("");
+  const [isReviewed, setIsReviewed] = useState(false);
+  const [open, setOpen] = useState(false);
+  const ready = useRequireAuth();
+
   const orderLabels = useMemo(() => {
     if (!order) return [];
     return [
@@ -30,46 +42,60 @@ const OrderDetailPage = ({ params }: { params: { id: string } }) => {
           : "Time",
       },
       { label: "KHO HÀNG", value: order?.store ?? "Kho hàng" },
-      { label: "TRẠNG THÁI", value: order?.status ?? "Trạng thái" },
+      { label: "TRẠNG THÁI", value: status },
     ];
+  }, [order, status]);
+
+  const orderDetailsItems: ProductItem[] = orderDetails.map((item) => ({
+    id: item.id,
+    product: item.product,
+    quantity: item.quantity,
+    totalPrice: item.total,
+  }));
+  useEffect(() => {
+    if (order) {
+      setStatus(order.status);
+      setIsReviewed(order.isReviewed ? true : false);
+    }
   }, [order]);
-
-  const orderDetailsLabel = useMemo(() => {
-    return [
-      { label: "ẢNH" },
-      { label: "TÊN SẢN PHẨM" },
-      { label: "GIÁ" },
-      { label: "SỐ LƯỢNG" },
-      { label: "TỔNG TIỀN" },
-    ];
-  }, []);
-
   const orderDetailsFooter = useMemo(() => {
     if (!order) return [];
     return [
       {
         label: "Giá",
-        value: order.subtotal.toLocaleString("vi-VN") + " đ" || "0 đ",
+        value: formatCurrency(order.subtotal) || "0 đ",
         isTotal: false,
       },
       {
         label: "Khuyến mãi",
-        value: order.discount * 100 + "%",
+        value: order.discount + "%",
         isTotal: false,
       },
       {
         label: "Phí vận chuyển",
-        value: order.shippingFee.toLocaleString("vi-VN") + " đ",
+        value: formatCurrency(order.shippingFee) || "0 đ",
         isTotal: false,
       },
       {
         label: "Tổng cộng",
-        value: order.totalPrice.toLocaleString("vi-VN") + " đ",
+        value: formatCurrency(order.totalPrice) || "0 đ",
         isTotal: true,
       },
     ];
   }, [order]);
 
+  const handleCancelOrder = async () => {
+    if (!order) return;
+    try {
+      await setStatusCancelOrder(order.id);
+      toast.success("Đơn hàng đã được hủy.");
+      setStatus("Đã hủy");
+    } catch (error) {
+      toast.error("Có lỗi xảy ra khi hủy đơn hàng.");
+      console.error(error);
+    }
+  };
+  if (!ready) return null;
   return (
     <div className="py-6">
       <BreadcrumbComponent
@@ -90,91 +116,87 @@ const OrderDetailPage = ({ params }: { params: { id: string } }) => {
         <div className="grid grid-cols-2 gap-y-2 gap-x-6 mb-6">
           {orderLabels.map((item, index) => (
             <div key={index}>
-              <p className="text-sm text-muted-foreground">{item.label}</p>
+              <p className="text-lg text-muted-foreground">{item.label}</p>
               <p className="font-medium">{item.value}</p>
             </div>
           ))}
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {orderDetailsLabel.map((item, index) => (
-                <TableCell key={index} className="font-semibold text-center">
-                  {item.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orderDetailsWithProducts?.map((detail) => {
-              const product = detail.product;
-
-              if (!product) {
-                return (
-                  <TableRow key={detail.id}>
-                    <TableCell
-                      colSpan={orderDetailsLabel.length}
-                      className="text-center text-red-500"
-                    >
-                      Không tìm thấy thông tin sản phẩm cho ID:{" "}
-                      {detail.productId}
-                    </TableCell>
-                  </TableRow>
-                );
-              }
-
-              return (
-                <TableRow key={detail.id}>
-                  <TableCell className="flex justify-center">
-                    <Image
-                      src={`/${product.image || "default-product.png"}`}
-                      alt={product.name}
-                      width={70}
-                      height={140}
-                      className="w-[70px] h-[140px]"
-                    />
+        <OrderTable
+          data={orderDetailsItems}
+          footer={
+            <>
+              {orderDetailsFooter.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell
+                    colSpan={headers.length - 1}
+                    className={
+                      item.isTotal
+                        ? "font-bold text-lg text-right"
+                        : "text-right font-normal"
+                    }
+                  >
+                    {item.label}
                   </TableCell>
-                  <TableCell className="text-center">{product.name}</TableCell>
-                  <TableCell className="text-center">
-                    {product.price.toLocaleString("vi-VN")}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {detail.quantity}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {(product.price * detail.quantity).toLocaleString("vi-VN") +
-                      " đ"}
+                  <TableCell
+                    className={
+                      item.isTotal
+                        ? "font-bold text-lg text-right"
+                        : "text-right font-normal"
+                    }
+                  >
+                    {item.value}
                   </TableCell>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-          <TableFooter>
-            {orderDetailsFooter.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell
-                  colSpan={orderDetailsLabel.length - 1}
-                  className={
-                    item.isTotal
-                      ? "font-bold text-lg text-right"
-                      : "text-right font-normal"
-                  }
-                >
-                  {item.label}
-                </TableCell>
-                <TableCell
-                  className={
-                    item.isTotal
-                      ? "font-bold text-lg text-right"
-                      : "text-right font-normal"
-                  }
-                >
-                  {item.value}
-                </TableCell>
-              </TableRow>
+              ))}
+            </>
+          }
+        />
+      </div>
+
+      <div className="my-6">
+        {(status === OrderStatus.PENDING ||
+          status === OrderStatus.APPROVED) && (
+          <ConfirmDialog
+            title="Hủy đơn hàng"
+            description="Bạn có chắc chắn muốn hủy đơn hàng này không?"
+            confirmText="Có"
+            cancelText="Không"
+            onConfirm={handleCancelOrder}
+            trigger={
+              <Button className="bg-black hover:bg-[var(--ring)] text-white">
+                Hủy đơn hàng
+              </Button>
+            }
+          />
+        )}
+        {status === OrderStatus.COMPLETED && !isReviewed && (
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-black hover:bg-[var(--ring)] text-white">
+                Đánh giá sản phẩm
+              </Button>
+            </DialogTrigger>
+            <ModalReview
+              orderDetails={orderDetails}
+              onClose={() => setOpen(false)}
+              onSuccess={() => setIsReviewed(true)}
+            />
+          </Dialog>
+        )}
+        {status === OrderStatus.COMPLETED && isReviewed && (
+          <div className="flex flex-col gap-y-4">
+            Xem sản phẩm bạn đã đánh giá:
+            {orderDetails.map((detail, index) => (
+              <Link
+                key={index}
+                href={`/product/${detail.product.id}`}
+                className="text-[var(--chart-5)] hover:text-[var(--chart-4)] underline"
+              >
+                {detail.product.name}
+              </Link>
             ))}
-          </TableFooter>
-        </Table>
+          </div>
+        )}
       </div>
     </div>
   );

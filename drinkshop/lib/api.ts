@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "./config"
+
 // Địa chỉ của JSON server
 const API_URL = process.env.NEXT_PUBLIC_API_ENDPOINT || "http://localhost:3001"
 
@@ -85,6 +87,14 @@ export interface FeaturedProduct {
     seconds: number
   }
 }
+export interface GalleryImage {
+  id: string
+  src: string
+  alt: string
+  gridClass: string
+  width?: number
+  height?: number
+}
 
 // API functions
 export async function getSlides(): Promise<Slide[]> {
@@ -141,4 +151,9 @@ export async function getAbout(): Promise<About> {
 
 export async function getFeatured(): Promise<FeaturedProduct> {
   return fetchData<FeaturedProduct>("featured")
+}
+
+
+export async function getGallery(): Promise<GalleryImage[]> {
+  return fetchData<GalleryImage[]>("gallery")
 }

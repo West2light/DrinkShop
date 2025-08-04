@@ -3,9 +3,9 @@ import { Geist, Geist_Mono, Gideon_Roman } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import NewsletterPopup from "@/components/products/newsletter-popup";
 import { CartProvider } from "@/contexts/CartContext";
 import { UserProvider } from "@/contexts/UserContext";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,9 +40,9 @@ export default function RootLayout({
           <UserProvider>
             <CartProvider>
               <Header />
+              <Toaster position="top-right" richColors />
               <div className="px-72">{children}</div>
               <Footer />
-              <NewsletterPopup />
             </CartProvider>
           </UserProvider>
         </div>
