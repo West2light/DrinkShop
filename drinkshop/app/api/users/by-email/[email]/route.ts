@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { publicApi } from "@/lib/api/axios";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { email: string } }
 ) {
   try {
