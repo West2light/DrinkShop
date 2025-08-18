@@ -6,7 +6,6 @@ import titleleftdark from "@/public/Image_Rudu/titleleft-dark.png";
 import Link from "next/link";
 import axios from "axios";
 import { useEffect, useMemo } from "react";
-import { useCartContext } from "@/contexts/CartContext";
 import {
   Table,
   TableBody,
@@ -30,11 +29,12 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/confirmdialog/ConfirmDialog";
 import { useRouter } from "next/navigation";
-import { formatCurrency } from "@/ultis/format.currency";
+import { formatCurrency } from "@/utils/format.currency";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { useCartStore } from "@/stores/cart.store";
 const CartPage = () => {
   const router = useRouter();
-  const { cart, setCart, isChange, setIsChange } = useCartContext();
+  const { cart, setCart, isChange, setIsChange } = useCartStore();
   const ready = useRequireAuth();
 
   const cartLabel = useMemo(
@@ -48,17 +48,6 @@ const CartPage = () => {
     ],
     []
   );
-
-  useEffect(() => {
-    const onBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isChange) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    };
-    window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [isChange]);
 
   useEffect(() => {
     if (!cart) return;
@@ -158,7 +147,7 @@ const CartPage = () => {
               <TableRow key={index}>
                 <TableCell className="flex justify-center">
                   <Image
-                    src={`/${cartItem.product?.image}`}
+                    src={`${cartItem.product?.image}`}
                     alt={cartItem.product?.name || "Product Image"}
                     width={70}
                     height={140}
@@ -171,19 +160,21 @@ const CartPage = () => {
                 <TableCell className="text-center">
                   {formatCurrency(cartItem.product?.price) || "0 đ"}
                 </TableCell>
-                <TableCell>
-                  <Input
-                    type="number"
-                    value={cartItem.quantity}
-                    min={1}
-                    className="w-20 text-center"
-                    onChange={(e) => {
-                      const newQuantity = parseInt(e.target.value);
-                      if (!isNaN(newQuantity) && newQuantity > 0) {
-                        handleQuantityChange(index, newQuantity);
-                      }
-                    }}
-                  />
+                <TableCell className="text-center">
+                  <div className="grid place-items-center">
+                    <Input
+                      type="number"
+                      value={cartItem.quantity}
+                      min={1}
+                      className="w-20 text-center"
+                      onChange={(e) => {
+                        const newQuantity = parseInt(e.target.value);
+                        if (!isNaN(newQuantity) && newQuantity > 0) {
+                          handleQuantityChange(index, newQuantity);
+                        }
+                      }}
+                    />
+                  </div>
                 </TableCell>
                 <TableCell className="text-center">
                   {cartItem.product?.price

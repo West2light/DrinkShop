@@ -12,25 +12,27 @@ import {
   OrderStore,
   OrderDetailCreate,
 } from "@/types/order.types";
-import { createOrder, createOrderDetails } from "@/ultis/api/order.api";
-import { useState, useMemo } from "react";
-import { useCartContext } from "@/contexts/CartContext";
-import { formatCurrency } from "@/ultis/format.currency";
+import { createOrder, createOrderDetails } from "@/utils/api/order.api";
+import { useState, useMemo, useEffect } from "react";
+import { formatCurrency } from "@/utils/format.currency";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
-import { fetchVoucher } from "@/ultis/api/voucher.api";
+import { fetchVoucher } from "@/utils/api/voucher.api";
 import { ProductItem } from "@/components/ordertable/OrderTable";
 import { useAddress } from "@/hooks/useAddressByUser";
-import { clearCart } from "@/ultis/api/cart.api";
+import { clearCart } from "@/utils/api/cart.api";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/hooks/useUser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { X } from "lucide-react";
-import { useUser as useUserContext } from "@/contexts/UserContext";
+import { useUserStore } from "@/stores/user.store";
+import { Address } from "@/types/user.types";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import ModalAddress from "@/components/address/ModalAddress";
+import { useCartStore } from "@/stores/cart.store";
 
 const CheckoutPage = () => {
-  const { user: currentUser } = useUserContext();
+  const { user: currentUser } = useUserStore();
   const userId = currentUser?.id;
   const router = useRouter();
   const ready = useRequireAuth();
@@ -43,12 +45,14 @@ const CheckoutPage = () => {
   const [voucherCode, setVoucherCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [voucherError, setVoucherError] = useState("");
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [openAddressModal, setOpenAddressModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { address } = useAddress(userId!);
-  const user = useUser(userId!);
+  const { addresses } = useAddress(userId!);
 
-  const { cart, setCart, setIsChange } = useCartContext();
+  //const { cart, setCart, setIsChange } = useCartContext();
+  const { cart, setCart, setIsChange } = useCartStore();
   const cartItems: ProductItem[] = useMemo(() => {
     return (
       cart?.items.map((item) => ({
@@ -59,6 +63,13 @@ const CheckoutPage = () => {
       })) ?? []
     );
   }, [cart]);
+  useEffect(() => {
+    if (addresses && addresses.length > 0) {
+      setSelectedAddress(
+        addresses.find((addr) => addr.isDefault) || addresses[0]
+      );
+    }
+  }, [addresses]);
 
   const subtotal = useMemo(
     () => cartItems.reduce((total, item) => total + item.totalPrice, 0),
@@ -78,20 +89,24 @@ const CheckoutPage = () => {
     () => cartItems.reduce((total, item) => total + item.quantity, 0),
     [cartItems]
   );
+
   const userInfo = useMemo(
     () => [
-      { label: "Họ tên", value: `${user?.firstName} ${user?.lastName}` },
+      {
+        label: "Họ tên",
+        value: `${currentUser?.firstName} ${currentUser?.lastName}`,
+      },
       {
         label: "Số điện thoại",
-        value: address?.phone || "Chưa cập nhật",
+        value: selectedAddress?.phone || "Chưa cập nhật",
       },
-      { label: "Email", value: user?.email },
+      { label: "Email", value: currentUser?.email },
       {
         label: "Địa chỉ",
-        value: `${address?.address}, ${address?.city}, ${address?.country}`,
+        value: `${selectedAddress?.address}, ${selectedAddress?.city}, ${selectedAddress?.country}`,
       },
     ],
-    [user, address]
+    [currentUser, selectedAddress]
   );
   const orderInfo = useMemo(
     () => [
@@ -154,7 +169,7 @@ const CheckoutPage = () => {
       router.push("/");
       return;
     }
-    if (!address?.id) {
+    if (!selectedAddress?.id) {
       toast.error("Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng");
       router.push("/account/addresses");
       return;
@@ -162,7 +177,7 @@ const CheckoutPage = () => {
 
     const orderData: OrderCreate = {
       userId: userId!,
-      addressId: address?.id || "",
+      addressId: selectedAddress?.id || "",
       status: OrderStatus.PENDING,
       store: OrderStore.HADONG,
       totalPrice: totalPrice,
@@ -179,7 +194,7 @@ const CheckoutPage = () => {
       const res = await createOrder(orderData);
       const orderId = res.id.toString();
 
-      await router.prefetch(`/account/orders/${orderId}`);
+      router.prefetch(`/account/orders/${orderId}`);
 
       const orderDetails: OrderDetailCreate[] = cart.items.map((item) => ({
         orderId: orderId,
@@ -187,11 +202,10 @@ const CheckoutPage = () => {
         product: item.product!,
         quantity: item.quantity,
         price: item.product?.price || 0,
-        total: item.quantity * (item.product?.price || 0),
+        totalPrice: item.quantity * (item.product?.price || 0),
       }));
 
-      await createOrderDetails(orderDetails);
-      await clearCart(cart);
+      await Promise.all([createOrderDetails(orderDetails), clearCart(cart)]);
 
       setCart({ ...cart, items: [], totalPrice: 0 });
       setIsChange(false);
@@ -309,6 +323,19 @@ const CheckoutPage = () => {
               <span className="font-medium">{item.label}:</span> {item.value}
             </p>
           ))}
+          <Dialog open={openAddressModal} onOpenChange={setOpenAddressModal}>
+            <DialogTrigger asChild>
+              <span className="text-black underline hover:text-[var(--chart-1)] cursor-pointer ">
+                Thay đổi địa chỉ
+              </span>
+            </DialogTrigger>
+            <ModalAddress
+              addresses={addresses}
+              selectedAddress={selectedAddress}
+              onClose={() => setOpenAddressModal(false)}
+              onSelect={(addr) => setSelectedAddress(addr)}
+            />
+          </Dialog>
         </div>
         <div className="border rounded-xl p-4 shadow-sm space-y-2">
           <h2 className="text-lg font-semibold mb-2">Tổng kết đơn hàng</h2>

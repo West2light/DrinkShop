@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { User } from '../../types/user.types';
-import { getUsers, deleteUser } from '../../services/userApi';
-import { Button } from "@/components/ui/button";
+import { useEffect, useState, useCallback } from 'react';
+import { User } from '@/types/user.types';
+import { getUsers, deleteUser } from '@/services/userApi';
+import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
@@ -11,18 +11,20 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-
+} from '@/components/ui/table';
 import {
     AlertDialog,
     AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
-    AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+    AlertDialogFooter,
+} from '../ui/alert-dialog';
+import { toast, Toaster } from 'sonner';
+import { Loader2 } from 'lucide-react';
+import UserForm from './UserForm';
 
 interface Column {
     key: keyof User | 'actions';
@@ -30,15 +32,32 @@ interface Column {
     render?: (user: User) => React.ReactNode;
 }
 
-export default function UserTable({ onEdit }: { onEdit: (user: User) => void }) {
+interface Props {
+    onEdit: (user: User) => void;
+}
+
+export default function UserTable({ onEdit }: Props) {
     const [users, setUsers] = useState<User[]>([]);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [showForm, setShowForm] = useState(false);
 
-    const loadUsers = async () => {
-        const data = await getUsers();
-        setUsers(data);
-    };
+    const loadUsers = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const data = await getUsers();
+            setUsers(data);
+            setError(null);
+        } catch {
+            setError('Failed to load users. Please try again.');
+            toast.error('Failed to load users');
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
 
     const handleDeleteClick = (user: User) => {
         setUserToDelete(user);
@@ -47,10 +66,16 @@ export default function UserTable({ onEdit }: { onEdit: (user: User) => void }) 
 
     const handleDeleteConfirm = async () => {
         if (userToDelete) {
-            await deleteUser(userToDelete.id);
-            setDeleteModalOpen(false);
-            setUserToDelete(null);
-            await loadUsers();
+            try {
+                await deleteUser(userToDelete.id);
+                toast.success(`User ${userToDelete.firstName} deleted successfully`);
+                await loadUsers();
+            } catch {
+                toast.error('Failed to delete user. Please try again.');
+            } finally {
+                setDeleteModalOpen(false);
+                setUserToDelete(null);
+            }
         }
     };
 
@@ -59,19 +84,34 @@ export default function UserTable({ onEdit }: { onEdit: (user: User) => void }) 
         setUserToDelete(null);
     };
 
+    const handleEdit = (user: User) => {
+        setEditingUser(user);
+        setShowForm(true);
+    };
+
+    const handleAddNew = () => {
+        setEditingUser(null);
+        setShowForm(true);
+    };
+
     const columns: Column[] = [
         { key: 'id', label: 'ID' },
-        { key: 'username', label: 'Username' },
+        { key: 'firstName', label: 'First Name' },
+        { key: 'lastName', label: 'Last Name' },
         { key: 'email', label: 'Email' },
         { key: 'role', label: 'Role' },
-        { key: 'status', label: 'Status' },
+        {
+            key: 'receiveNews',
+            label: 'Receive News',
+            render: (user: User) => (user.receiveNews ? 'Yes' : 'No'),
+        },
         {
             key: 'actions',
             label: 'Actions',
             render: (user: User) => (
                 <div className="flex gap-2">
                     <Button
-                        onClick={() => onEdit(user)}
+                        onClick={() => handleEdit(user)}
                         variant="outline"
                         size="sm"
                         className="text-blue-600 hover:text-blue-800"
@@ -87,60 +127,76 @@ export default function UserTable({ onEdit }: { onEdit: (user: User) => void }) 
                         Delete
                     </Button>
                 </div>
-            )
-        }
+            ),
+        },
     ];
 
     useEffect(() => {
         loadUsers();
-    }, []);
+    }, [loadUsers]);
 
     return (
         <>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        {columns.map((column) => (
-                            <TableHead key={column.key}>
-                                {column.label}
-                            </TableHead>
-                        ))}
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {users.map((user) => (
-                        <TableRow key={user.id}>
+            <Toaster position="top-right" richColors />
+            {showForm && (
+                <UserForm
+                    user={editingUser}
+                    onSave={() => setShowForm(false)}
+                    onReload={loadUsers} // Pass loadUsers to UserForm
+                />
+            )}
+            {isLoading ? (
+                <div className="flex justify-center items-center h-64">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+            ) : error ? (
+                <div className="text-red-500 text-center">{error}</div>
+            ) : (
+                <Table>
+                    <TableHeader>
+                        <TableRow>
                             {columns.map((column) => (
-                                <TableCell key={column.key}>
-                                    {column.render
-                                        ? column.render(user)
-                                        : user[column.key as keyof User]
-                                    }
-                                </TableCell>
+                                <TableHead key={column.key}>{column.label}</TableHead>
                             ))}
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHeader>
+                    <TableBody>
+                        {users.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} className="text-center">
+                                    No users found
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            users.map((user) => (
+                                <TableRow key={user.id}>
+                                    {columns.map((column) => (
+                                        <TableCell key={String(column.key)}>
+                                            {column.render ? column.render(user) : (user[column.key as keyof User] as React.ReactNode)}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
+            )}
 
             <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Xác nhận xóa người dùng</AlertDialogTitle>
+                        <AlertDialogTitle>Confirm Delete User</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Bạn có chắc chắn muốn xóa người dùng <strong>{userToDelete?.username}</strong> không?
-                            Hành động này không thể hoàn tác.
+                            Are you sure you want to delete user <strong>{String(userToDelete?.firstName ?? '')}</strong>? This action cannot be undone.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel onClick={handleDeleteCancel}>
-                            Hủy
-                        </AlertDialogCancel>
+                        <AlertDialogCancel onClick={handleDeleteCancel}>Cancel</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleDeleteConfirm}
                             className="bg-red-600 hover:bg-red-700"
                         >
-                            Xóa
+                            Delete
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

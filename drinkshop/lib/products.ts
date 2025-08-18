@@ -1,8 +1,8 @@
 export interface Product {
   id: number
   name: string
-  price: string
-  originalPrice?: string
+  price: number
+  originalPrice?: number
   image: string
   category: string
   description: string
@@ -16,8 +16,8 @@ export const products: Product[] = [
   {
     id: 1,
     name: "LA CAPRA VIOGNIER",
-    price: "450.000",
-    originalPrice: "520.000",
+    price: 450000,
+    originalPrice: 520000,
     image: "/Product/1.jpg",
     category: "Rượu Vang Trắng",
     description:
@@ -30,8 +30,8 @@ export const products: Product[] = [
   {
     id: 2,
     name: "RAMONDA ROURES",
-    price: "680.000",
-    originalPrice: "750.000",
+    price: 680000,
+    originalPrice: 750000,
     image: "/Product/2.jpg",
     category: "Rượu Vang Đỏ",
     description:
@@ -44,8 +44,8 @@ export const products: Product[] = [
   {
     id: 3,
     name: "TORELLO MOSAICS 05",
-    price: "590.000",
-    originalPrice: "650.000",
+    price: 590000,
+    originalPrice: 650000,
     image: "/Product/3.jpg",
     category: "Rượu Vang Trắng",
     description:
@@ -58,8 +58,8 @@ export const products: Product[] = [
   {
     id: 4,
     name: "TORELLO DOLÇ",
-    price: "720.000",
-    originalPrice: "800.000",
+    price: 720000,
+    originalPrice: 800000,
     image: "/Product/4.jpg",
     category: "Rượu Vang Ngọt",
     description:
@@ -72,7 +72,7 @@ export const products: Product[] = [
   {
     id: 5,
     name: "TORELLO MARC",
-    price: "850.000",
+    price: 850000,
     image: "/Product/5.jpg",
     category: "Champagne",
     description:
@@ -85,7 +85,7 @@ export const products: Product[] = [
   {
     id: 6,
     name: "TORELLO BRUT RESERVA",
-    price: "920.000",
+    price: 920000,
     image: "/Product/6.jpg",
     category: "Champagne",
     description: "Champagne Brut Reserva với chất lượng cao cấp, bọt khí tinh tế và hương vị cân bằng hoàn hảo.",
@@ -97,8 +97,8 @@ export const products: Product[] = [
   {
     id: 7,
     name: "PETJADES ROSÉ",
-    price: "380.000",
-    originalPrice: "420.000",
+    price: 380000,
+    originalPrice: 420000,
     image: "/Product/7.jpg",
     category: "Rượu Vang Rosé",
     description:
@@ -111,8 +111,8 @@ export const products: Product[] = [
   {
     id: 8,
     name: "CAMPERCHI TOSCANA",
-    price: "1.250.000",
-    originalPrice: "1.400.000",
+    price: 1250000,
+    originalPrice: 1400000,
     image: "/Product/8.jpg",
     category: "Rượu Vang Đỏ",
     description:
@@ -125,8 +125,8 @@ export const products: Product[] = [
   {
     id: 9,
     name: "ROOT:1 CABERNET SAUVIGNON",
-    price: "1.580.000",
-    originalPrice: "1.750.000",
+    price: 1580000,
+    originalPrice: 1750000,
     image: "/Product/9.jpg",
     category: "Rượu Vang Đỏ",
     description:
@@ -139,8 +139,8 @@ export const products: Product[] = [
   {
     id: 10,
     name: "PRIMARIO PUGLIA 2000",
-    price: "890.000",
-    originalPrice: "980.000",
+    price: 890000,
+    originalPrice: 980000,
     image: "/Product/10.jpg",
     category: "Rượu Vang Đỏ",
     description:
@@ -153,8 +153,8 @@ export const products: Product[] = [
   {
     id: 11,
     name: "ADMIT ONE RED BLEND",
-    price: "750.000",
-    originalPrice: "850.000",
+    price: 750000,
+    originalPrice: 850000,
     image: "/Product/11.jpg",
     category: "Rượu Vang Đỏ",
     description:
@@ -167,8 +167,8 @@ export const products: Product[] = [
   {
     id: 12,
     name: "EL GUAPO RED WINE",
-    price: "520.000",
-    originalPrice: "580.000",
+    price: 520000,
+    originalPrice: 580000,
     image: "/Product/12.jpg",
     category: "Rượu Vang Đỏ",
     description:
@@ -181,8 +181,8 @@ export const products: Product[] = [
   {
     id: 13,
     name: "IT SHOULD BE RIESLING",
-    price: "480.000",
-    originalPrice: "540.000",
+    price: 480000,
+    originalPrice: 540000,
     image: "/Product/13.jpg",
     category: "Rượu Vang Trắng",
     description:
@@ -195,8 +195,8 @@ export const products: Product[] = [
   {
     id: 14,
     name: "ALPATACO SAUVIGNON BLANC",
-    price: "420.000",
-    originalPrice: "480.000",
+    price: 420000,
+    originalPrice: 480000,
     image: "/Product/14.jpg",
     category: "Rượu Vang Trắng",
     description:

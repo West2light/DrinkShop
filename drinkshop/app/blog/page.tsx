@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { getAllBlogPosts } from "@/lib/api"
 import type { BlogPost } from "@/lib/api"
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent"
-import BlogCardSkeleton from "@/components/products/blog-card-skeleton"
+import BlogCardSkeleton from "@/components/products/BlogCardSkeleton"
 import {
     Pagination,
     PaginationContent,
@@ -20,6 +20,7 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination"
 import "./blog.css"
+import CustomPagination from "@/components/pagination/CustomPagination"
 export default async function BlogPage() {
     // Fetch blog posts với try-catch để xử lý lỗi
     let blogPosts: BlogPost[] = []
@@ -143,27 +144,7 @@ export default async function BlogPage() {
                     </div>
 
                     {/* Pagination */}
-                    <div className="mt-8 lg:mt-12 mb-8">
-                        <Pagination>
-                            <PaginationContent>
-                                <PaginationItem>
-                                    <PaginationPrevious href="#" className="hidden sm:flex" />
-                                </PaginationItem>
-                                <PaginationItem>
-                                    <PaginationLink href="#" isActive>1</PaginationLink>
-                                </PaginationItem>
-                                <PaginationItem>
-                                    <PaginationLink href="#">2</PaginationLink>
-                                </PaginationItem>
-                                <PaginationItem>
-                                    <PaginationLink href="#" className="hidden sm:flex">3</PaginationLink>
-                                </PaginationItem>
-                                <PaginationItem>
-                                    <PaginationNext href="#" className="hidden sm:flex" />
-                                </PaginationItem>
-                            </PaginationContent>
-                        </Pagination>
-                    </div>
+                    <CustomPagination />
                 </div>
             </div>
         </div>

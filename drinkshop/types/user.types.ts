@@ -9,6 +9,7 @@ export interface User {
   avatar: string;
   role: UserRole;
   receiveNews: boolean;
+  twoFactorEnabled: boolean;
 }
 
 export type UserWithoutPassword = Omit<User, "password">;

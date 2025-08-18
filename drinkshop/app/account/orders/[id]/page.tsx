@@ -10,17 +10,19 @@ import OrderTable, {
 } from "@/components/ordertable/OrderTable";
 import { useEffect, useState, useMemo, use } from "react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { setStatusCancelOrder } from "@/ultis/api/order.api";
+import { setStatusCancelOrder } from "@/utils/api/order.api";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useOrderDetails } from "@/hooks/useOrderDetails";
 import { ConfirmDialog } from "@/components/confirmdialog/ConfirmDialog";
-import { formatCurrency } from "@/ultis/format.currency";
+import { formatCurrency } from "@/utils/format.currency";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { OrderStatus } from "@/types/order.types";
 import { useOrder } from "@/hooks/useOrder";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Link from "next/dist/client/link";
+import { fetchAddress } from "@/utils/api/address.api";
+import { Address } from "@/types/user.types";
 
 const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
@@ -29,7 +31,22 @@ const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [status, setStatus] = useState("");
   const [isReviewed, setIsReviewed] = useState(false);
   const [open, setOpen] = useState(false);
+  const [address, setAddress] = useState<Address | null>(null);
   const ready = useRequireAuth();
+
+  useEffect(() => {
+    const getAddress = async () => {
+      if (order?.addressId) {
+        try {
+          const data = await fetchAddress(order.addressId);
+          setAddress(data);
+        } catch (error) {
+          console.error("Lỗi khi lấy địa chỉ:", error);
+        }
+      }
+    };
+    getAddress();
+  }, [order?.addressId]);
 
   const orderLabels = useMemo(() => {
     if (!order) return [];
@@ -43,14 +60,24 @@ const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
       },
       { label: "KHO HÀNG", value: order?.store ?? "Kho hàng" },
       { label: "TRẠNG THÁI", value: status },
+      {
+        label: "SỐ ĐIỆN THOẠI",
+        value: address ? address.phone : "Chưa có số điện thoại",
+      },
+      {
+        label: "ĐỊA CHỈ GIAO HÀNG",
+        value: address
+          ? `${address.address}, ${address.city}, ${address.country}`
+          : "Chưa có địa chỉ",
+      },
     ];
-  }, [order, status]);
+  }, [order, status, address]);
 
   const orderDetailsItems: ProductItem[] = orderDetails.map((item) => ({
     id: item.id,
     product: item.product,
     quantity: item.quantity,
-    totalPrice: item.total,
+    totalPrice: item.totalPrice,
   }));
   useEffect(() => {
     if (order) {
@@ -189,7 +216,7 @@ const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
             {orderDetails.map((detail, index) => (
               <Link
                 key={index}
-                href={`/product/${detail.product.id}`}
+                href={`/products/${detail.product.id}`}
                 className="text-[var(--chart-5)] hover:text-[var(--chart-4)] underline"
               >
                 {detail.product.name}

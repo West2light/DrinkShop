@@ -8,7 +8,7 @@ import {
   SelectGroup,
   SelectLabel,
 } from "@/components/ui/select";
-import { formatCurrency } from "@/ultis/format.currency";
+import { formatCurrency } from "@/utils/format.currency";
 type Option = {
   label: string;
   value: string;

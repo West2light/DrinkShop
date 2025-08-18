@@ -29,7 +29,37 @@ export async function POST(request: NextRequest) {
 
     const user = users[0];
 
-    // Return user data without password
+    // Check if user has 2FA enabled
+    if (user.twoFactorEnabled) {
+      // Send 2FA code but don't log user in yet
+      try {
+        await fetch(
+          `${
+            process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+          }/api/auth/2fa/send-code`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: user.email }),
+          }
+        );
+
+        return NextResponse.json({
+          success: true,
+          requiresTwoFactor: true,
+          email: user.email,
+          message: "2FA code sent to your email",
+        });
+      } catch (error) {
+        console.error("Failed to send 2FA code:", error);
+        return NextResponse.json(
+          { success: false, message: "Failed to send 2FA code" },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Normal login (no 2FA)
     const { password: _, ...userWithoutPassword } = user;
     const successResponse: UserResponse = {
       success: true,

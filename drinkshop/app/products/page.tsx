@@ -1,37 +1,47 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Grid, List } from "lucide-react"
-import ProductCard from "@/components/products/product-card"
+import Image from "next/image"
+import Link from "next/link"
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent"
 import { products } from "@/lib/products"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
+import styles from "./products.module.css"
+import CustomPagination from "@/components/pagination/CustomPagination"
+import ProductSidebar from "@/components/products/ProductSidebar"
+import ProductToolbar from "@/components/products/ProductToolbar"
+import ProductGrid from "@/components/products/ProductGrid"
+
 export default function ProductsPage() {
   const searchParams = useSearchParams()
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [sortBy, setSortBy] = useState<string>("default")
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [urlSearchQuery, setUrlSearchQuery] = useState<string>("") // Separate state for URL search
+  const itemsPerPage = 6
 
-  // Set category from URL params when component mounts
+  // Set category and search from URL params when component mounts
   useEffect(() => {
     const categoryFromUrl = searchParams.get('category')
+    const searchFromUrl = searchParams.get('search')
+
     if (categoryFromUrl) {
       setSelectedCategory(decodeURIComponent(categoryFromUrl))
     }
+
+    if (searchFromUrl) {
+      setUrlSearchQuery(decodeURIComponent(searchFromUrl)) // Set URL search but don't populate input
+    } else {
+      setUrlSearchQuery("") // Clear URL search if no param
+    }
   }, [searchParams])
+
+  // Reset current page when search query or category changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, urlSearchQuery, selectedCategory])
 
   const categories = [
     { name: "Tất cả", value: "all", count: products.length },
@@ -64,17 +74,38 @@ export default function ProductsPage() {
   let filteredProducts =
     selectedCategory === "all" ? products : products.filter((product) => product.category === selectedCategory)
 
+  // Apply search filter (combine both local search and URL search)
+  const activeSearchQuery = searchQuery.trim() || urlSearchQuery.trim()
+  if (activeSearchQuery !== "") {
+    filteredProducts = filteredProducts.filter((product) =>
+      product.name.toLowerCase().includes(activeSearchQuery.toLowerCase()) ||
+      product.description?.toLowerCase().includes(activeSearchQuery.toLowerCase())
+    )
+  }
+
   // Sort products
   if (sortBy === "price-low") {
     filteredProducts = [...filteredProducts].sort(
-      (a, b) => Number.parseInt(a.price.replace(/\./g, "")) - Number.parseInt(b.price.replace(/\./g, "")),
+      (a, b) => a.price - b.price
     )
   } else if (sortBy === "price-high") {
     filteredProducts = [...filteredProducts].sort(
-      (a, b) => Number.parseInt(b.price.replace(/\./g, "")) - Number.parseInt(a.price.replace(/\./g, "")),
+      (a, b) => b.price - a.price
     )
   } else if (sortBy === "name") {
     filteredProducts = [...filteredProducts].sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem)
+
+  // Handle page change
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   // Prepare breadcrumb items
@@ -102,147 +133,84 @@ export default function ProductsPage() {
 
       {/* Hero Image */}
       <div className="relative overflow-hidden">
-        <img
-          style={{
-            width: "100%", height: "auto",
-            maxHeight: "400px", objectFit: "cover"
-          }}
+        <Image
           src="/Image_Rudu/slide-3.jpg"
           alt="Banner rượu vang cao cấp"
+          width={800}
+          height={400}
+          className={styles.heroBanner}
         />
       </div>
 
       <div className="container mx-auto px-4 py-6 lg:py-8">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Sidebar */}
-          <div className="lg:w-1/4">
-            {/* Categories */}
-            <div className="mb-6 lg:mb-8">
-              <h3 className="text-lg font-bold mb-4 border-b pb-2">DANH MỤC SẢN PHẨM
-                <img src="/Image_Rudu/titleleft-dark.png" alt="arrow-trang-tri" />
-              </h3>
-
-              <ul className="space-y-2">
-                {categories.map((category, index) => (
-                  <li key={index}>
-                    <button
-                      onClick={() => setSelectedCategory(category.value)}
-                      className={`text-sm hover:text-yellow-600 flex justify-between w-full text-left py-1 ${selectedCategory === category.value ? "text-yellow-600 font-medium" : "text-gray-600"
-                        }`}
-                    >
-                      <span>{category.name}</span>
-                      <span>({category.count})</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Product Count */}
-            <div className="mb-6 lg:mb-8 hidden lg:block">
-              <h3 className="text-lg font-bold mb-4 border-b pb-2">SO SÁNH SẢN PHẨM
-                <img src="/Image_Rudu/titleleft-dark.png" alt="arrow-trang-tri" />
-              </h3>
-              <p className="text-sm text-gray-600">Bạn chưa có sản phẩm nào để so sánh</p>
-            </div>
-
-            {/* Tags */}
-            <div className="mb-6 lg:mb-8">
-              <h3 className="text-lg font-bold mb-4 border-b pb-2">TAG SẢN PHẨM
-                <img src="/Image_Rudu/titleleft-dark.png" alt="arrow-trang-tri" />
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag, index) => (
-                  <Badge key={index} variant="outline" className="cursor-pointer hover:bg-yellow-100 text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            {/* Promotional Banner */}
-            <div className="mb-6 lg:mb-8 hidden lg:block">
-
-              <img src="/Image_Rudu/introduction.jpg" alt="Promotional Banner" />
-
-            </div>
-          </div>
+          <ProductSidebar
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+            tags={tags}
+          />
 
           {/* Main Content */}
           <div className="lg:w-3/4">
             {/* Toolbar */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-600">
-                  Hiển thị 1-{filteredProducts.length} của {filteredProducts.length} kết quả
-                </span>
-              </div>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-full sm:w-48">
-                    <SelectValue placeholder="Sắp xếp theo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="default">Mặc định</SelectItem>
-                    <SelectItem value="price-low">Giá thấp đến cao</SelectItem>
-                    <SelectItem value="price-high">Giá cao đến thấp</SelectItem>
-                    <SelectItem value="name">Tên A-Z</SelectItem>
-                  </SelectContent>
-                </Select>
-                <div className="flex border rounded">
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                  >
-                    <Grid className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                  >
-                    <List className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <ProductToolbar
+              totalProducts={filteredProducts.length}
+              indexOfFirstItem={indexOfFirstItem}
+              indexOfLastItem={indexOfLastItem}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
 
             {/* Products Grid */}
-            <div
-              className={`grid gap-4 lg:gap-6 ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
-                }`}
-            >
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} viewMode={viewMode} />
-              ))}
-            </div>
+            {currentProducts.length > 0 ? (
+              <ProductGrid products={currentProducts} viewMode={viewMode} />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-lg text-gray-600 mb-4">
+                  {activeSearchQuery ? `Không tìm thấy sản phẩm nào cho "${activeSearchQuery}"` : "Không có sản phẩm nào"}
+                </p>
+                <p className="text-sm text-gray-500 mb-6">
+                  Thử tìm kiếm với từ khóa khác hoặc duyệt qua các danh mục khác.
+                </p>
+                <div className="flex gap-4 justify-center">
+                  {activeSearchQuery && (
+                    <button
+                      onClick={() => {
+                        setSearchQuery("");
+                        setUrlSearchQuery("");
+                        setCurrentPage(1);
+                      }}
+                      className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors"
+                    >
+                      Xóa bộ lọc tìm kiếm
+                    </button>
+                  )}
+                  <Link
+                    href="/products"
+                    className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                  >
+                    Xem tất cả sản phẩm
+                  </Link>
+                </div>
+              </div>
+            )}
 
             {/* Pagination */}
-            <div className="mt-8 lg:mt-12 mb-8">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious href="#" className="hidden sm:flex" />
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink href="#" isActive>1</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink href="#">2</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink href="#" className="hidden sm:flex">3</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationNext href="#" className="hidden sm:flex" />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
+            <CustomPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           </div>
         </div>
       </div>
     </div>
   )
 }
+

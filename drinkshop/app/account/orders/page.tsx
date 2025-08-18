@@ -12,41 +12,42 @@ import Image from "next/image";
 import titleleftdark from "@/public/Image_Rudu/titleleft-dark.png";
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent";
 import { useState, useMemo } from "react";
-import { useUser as useUserContext } from "@/contexts/UserContext";
+import { useUserStore } from "@/stores/user.store";
 import { MapPin, Phone, User } from "lucide-react";
-import { formatCurrency } from "@/ultis/format.currency";
+import { formatCurrency } from "@/utils/format.currency";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { OrderStatus } from "@/types/order.types";
 import { useAddress } from "@/hooks/useAddressByUser";
 import { useOrders } from "@/hooks/useOrders";
-import { useUser } from "@/hooks/useUser";
 
 const OrdersPage = () => {
   const ready = useRequireAuth();
-  const { user: currentUser } = useUserContext();
+  const { user: currentUser } = useUserStore();
   const userId = currentUser?.id || "";
 
   const [status, setStatus] = useState<string>("all");
 
-  const user = useUser(userId);
   const orders = useOrders(userId);
-  const { address } = useAddress(userId);
+  const { addresses } = useAddress(userId);
+  const address =
+    addresses.find((addr) => addr.isDefault) || addresses[0] || null;
 
   const customerInfo = [
     {
       icon: <User className="w-6 h-6 text-[var(--foreground)]" />,
       content: [
-        user?.firstName ?? "First Name" + " " + user?.lastName ?? "Last Name",
-        user?.email ?? "Email",
+        `${currentUser?.firstName ?? "First Name"} ${
+          currentUser?.lastName ?? "Last Name"
+        }`,
+        currentUser?.email ?? "Email",
       ],
     },
     {
       icon: <MapPin className="w-6 h-6 text-[var(--foreground)]" />,
       content: [
-        address?.address ??
-          "Chưa có địa chỉ" + ", " + address?.city ??
-          "" + ", " + address?.country ??
-          "",
+        address
+          ? `${address.address}, ${address.city}, ${address.country}`
+          : "Chưa có địa chỉ",
       ],
     },
     {

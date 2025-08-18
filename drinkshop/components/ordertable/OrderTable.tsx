@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/table";
 import Image from "next/image";
 import { Product } from "@/types/product.types";
-import { formatCurrency } from "@/ultis/format.currency";
+import { formatCurrency } from "@/utils/format.currency";
 
 export interface ProductItem {
   id: string;
@@ -61,7 +61,7 @@ const OrderTable = (props: OrderTableProps) => {
             <TableRow key={item.id}>
               <TableCell className="flex justify-center">
                 <Image
-                  src={`/${product.image || "default-product.png"}`}
+                  src={`${product.image || "default-product.png"}`}
                   alt={product.name}
                   width={70}
                   height={140}
