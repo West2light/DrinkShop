@@ -83,8 +83,12 @@ export default function ResetPasswordPage() {
 
       await authService.resetPassword(token, data.newPassword);
       setSuccess(true);
-    } catch (err: any) {
-      setError(err.message || "Có lỗi xảy ra");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Có lỗi xảy ra");
+      }
     } finally {
       setLoading(false);
     }

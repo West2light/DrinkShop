@@ -94,7 +94,7 @@ const TopNavbar = () => {
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!searchQuery.trim()) return;
 
     const query = searchQuery.trim().toLowerCase();
@@ -107,9 +107,12 @@ const TopNavbar = () => {
       router.push(matchedRoute);
     } else {
       // Check if there are any products matching the search
+
       // Import products to check if search has results
-      const { products } = require("@/lib/products");
-      const hasProductResults = products.some((product: any) =>
+      const productsModule = await import("@/lib/products");
+      const products = productsModule.products;
+      type Product = { name: string; description?: string };
+      const hasProductResults = products.some((product: Product) =>
         product.name.toLowerCase().includes(query) ||
         product.description?.toLowerCase().includes(query)
       );

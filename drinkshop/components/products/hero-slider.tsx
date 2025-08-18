@@ -13,14 +13,20 @@ import { getSlides, type Slide } from "@/lib/api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-
+type CarouselApi = {
+    selectedScrollSnap: () => number;
+    on: (event: string, callback: () => void) => void;
+    off: (event: string, callback: () => void) => void;
+    scrollNext: () => void;
+    scrollTo: (index: number) => void;
+};
 export default function HeroSlider() {
     const [slides, setSlides] = useState<Slide[]>([]);
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [api, setApi] = useState<any>(null);
+    const [api, setApi] = useState<CarouselApi | null>(null);
 
     // Fetch slides data
     useEffect(() => {
@@ -124,7 +130,7 @@ export default function HeroSlider() {
             }}
             onMouseEnter={() => setIsAutoPlaying(false)}
             onMouseLeave={() => setIsAutoPlaying(true)}
-            setApi={setApi}
+            setApi={(emblaApi) => setApi(emblaApi as CarouselApi ?? null)}
         >
             <CarouselContent>
                 {slides.map((slide: Slide) => (
@@ -191,8 +197,8 @@ export default function HeroSlider() {
                         key={slide.id}
                         onClick={() => goToSlide(index)}
                         className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 ${index === currentSlide
-                                ? "bg-yellow-600 scale-125"
-                                : "bg-white/50 hover:bg-white/75"
+                            ? "bg-yellow-600 scale-125"
+                            : "bg-white/50 hover:bg-white/75"
                             }`}
                         aria-label={`Go to slide ${index + 1}`}
                     />

@@ -1,15 +1,33 @@
 'use client'
 
 import { useState } from "react"
+import Image from "next/image"
 import { User, MoreHorizontal, ThumbsUp, MessageCircle, Flag } from "lucide-react"
 
+type CommentType = {
+    id: number;
+    name: string;
+    avatar: string | null;
+    verified: boolean;
+    timeAgo: string;
+    content: string;
+    likes: number;
+    liked: boolean;
+    replies: CommentType[];
+};
+type CommentProps = {
+    comment: CommentType;
+    onReply: (commentId: number, replyText: string) => void;
+    onLike: (commentId: number) => void;
+    onReport: (commentId: number) => void;
+};
 // Component for individual comment
-const Comment = ({ comment, onReply, onLike, onReport }: any) => {
+const Comment = ({ comment, onReply, onLike, onReport }: CommentProps) => {
     const [showReplyForm, setShowReplyForm] = useState(false)
     const [replyText, setReplyText] = useState('')
     const [showReplies, setShowReplies] = useState(false)
 
-    const handleReplySubmit = (e: any) => {
+    const handleReplySubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (replyText.trim()) {
             onReply(comment.id, replyText)
@@ -25,7 +43,7 @@ const Comment = ({ comment, onReply, onLike, onReport }: any) => {
                 {/* Avatar */}
                 <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
                     {comment.avatar ? (
-                        <img src={comment.avatar} alt={comment.name} className="w-full h-full object-cover" />
+                        <Image src={comment.avatar} alt={comment.name} className="w-full h-full object-cover" width={40} height={40} />
                     ) : (
                         <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
                             <span className="text-white font-medium text-sm">
@@ -62,8 +80,8 @@ const Comment = ({ comment, onReply, onLike, onReport }: any) => {
                         <button
                             onClick={() => onLike(comment.id)}
                             className={`flex items-center space-x-1 text-xs transition-colors ${comment.liked
-                                    ? 'text-blue-600 hover:text-blue-700'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'text-blue-600 hover:text-blue-700'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
                             <ThumbsUp className={`w-3 h-3 ${comment.liked ? 'fill-current' : ''}`} />
@@ -135,7 +153,7 @@ const Comment = ({ comment, onReply, onLike, onReport }: any) => {
 
                             {showReplies && (
                                 <div className="space-y-4 ml-4 border-l-2 border-gray-100 pl-4">
-                                    {comment.replies.map((reply: any) => (
+                                    {comment.replies.map((reply) => (
                                         <Comment
                                             key={reply.id}
                                             comment={reply}
@@ -156,7 +174,7 @@ const Comment = ({ comment, onReply, onLike, onReport }: any) => {
 
 // Main Comments Section Component
 const CommentsSection = () => {
-    const [comments, setComments] = useState([
+    const [comments, setComments] = useState<CommentType[]>([
         {
             id: 1,
             name: "Minh Anh Nguyễn",
@@ -204,18 +222,18 @@ const CommentsSection = () => {
         }
     ])
 
-    const [commentForm, setCommentForm] = useState({
+    const [commentForm, setCommentForm] = useState<{ name: string; email: string; content: string }>({
         name: '',
         email: '',
         content: ''
     })
 
-    const [sortBy, setSortBy] = useState('newest') // newest, oldest, most_liked
+    const [sortBy, setSortBy] = useState<string>('newest') // newest, oldest, most_liked
 
-    const handleCommentSubmit = (e: any) => {
+    const handleCommentSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (commentForm.name && commentForm.email && commentForm.content) {
-            const newComment = {
+            const newComment: CommentType = {
                 id: Date.now(),
                 name: commentForm.name,
                 avatar: null,
@@ -234,8 +252,8 @@ const CommentsSection = () => {
         }
     }
 
-    const handleReply = (commentId: any, replyText: any) => {
-        const newReply = {
+    const handleReply = (commentId: number, replyText: string) => {
+        const newReply: CommentType = {
             id: Date.now(),
             name: "Bạn", // In real app, this would be current user's name
             avatar: null,
@@ -258,7 +276,7 @@ const CommentsSection = () => {
         }))
     }
 
-    const handleLike = (commentId: any) => {
+    const handleLike = (commentId: number) => {
         setComments(comments.map(comment => {
             if (comment.id === commentId) {
                 return {
@@ -287,7 +305,7 @@ const CommentsSection = () => {
         }))
     }
 
-    const handleReport = (commentId: any) => {
+    const handleReport = (commentId: number) => {
         alert('Báo cáo đã được gửi. Chúng tôi sẽ xem xét và xử lý trong thời gian sớm nhất.')
     }
 

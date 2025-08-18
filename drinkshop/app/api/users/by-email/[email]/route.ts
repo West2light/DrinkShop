@@ -13,7 +13,7 @@ export async function GET(
     const users = response.data || response;
 
     const user = Array.isArray(users)
-      ? users.find((u: any) => u.email === email)
+      ? users.find((u: unknown) => (u as { email: string }).email === email)
       : null;
 
     if (!user) {

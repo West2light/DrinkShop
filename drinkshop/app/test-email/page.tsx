@@ -12,11 +12,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+type TestEmailResult = {
+  success: boolean;
+  message: string;
+  messageId?: string;
+  error?: string;
+  instructions?: string;
+};
+
 export default function TestEmailPage() {
   const [email, setEmail] = useState("test@example.com");
   const [type, setType] = useState("2fa");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<TestEmailResult | null>(null);
 
   const sendTestEmail = async () => {
     setLoading(true);
@@ -88,15 +96,13 @@ export default function TestEmailPage() {
 
           {result && (
             <Card
-              className={`mt-4 ${
-                result.success ? "border-green-500" : "border-red-500"
-              }`}
+              className={`mt-4 ${result.success ? "border-green-500" : "border-red-500"
+                }`}
             >
               <CardContent className="pt-6">
                 <div
-                  className={`text-sm ${
-                    result.success ? "text-green-700" : "text-red-700"
-                  }`}
+                  className={`text-sm ${result.success ? "text-green-700" : "text-red-700"
+                    }`}
                 >
                   <strong>Status:</strong>{" "}
                   {result.success ? "Success" : "Error"}

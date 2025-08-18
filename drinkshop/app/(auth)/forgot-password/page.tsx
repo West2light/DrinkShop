@@ -35,7 +35,6 @@ const forgotPasswordSchema = z.object({
 type FormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPasswordPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -54,8 +53,12 @@ export default function ForgotPasswordPage() {
 
       await authService.sendForgotPasswordEmail(data.email);
       setSuccess(true);
-    } catch (err: any) {
-      setError(err.message || "Có lỗi xảy ra");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Có lỗi xảy ra");
+      }
     } finally {
       setLoading(false);
     }

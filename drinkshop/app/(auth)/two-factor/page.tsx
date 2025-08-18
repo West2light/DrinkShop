@@ -90,8 +90,12 @@ export default function TwoFactorPage() {
       } else {
         router.push("/");
       }
-    } catch (err: any) {
-      setError(err.message || "Xác thực thất bại");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Xác thực thất bại");
+      }
     } finally {
       setLoading(false);
     }
@@ -106,8 +110,12 @@ export default function TwoFactorPage() {
 
       await authService.twoFactor.sendCode(email);
       setResendCooldown(60); // 60 seconds cooldown
-    } catch (err: any) {
-      setError(err.message || "Không thể gửi lại mã");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Không thể gửi lại mã");
+      }
     } finally {
       setResendLoading(false);
     }
@@ -176,8 +184,8 @@ export default function TwoFactorPage() {
                     {resendCooldown > 0
                       ? `Gửi lại sau ${resendCooldown}s`
                       : resendLoading
-                      ? "Đang gửi..."
-                      : "Gửi lại mã"}
+                        ? "Đang gửi..."
+                        : "Gửi lại mã"}
                   </Button>
                 </div>
               </div>

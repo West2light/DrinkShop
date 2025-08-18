@@ -1,7 +1,9 @@
+
 import ProductCard from "@/components/products/ProductCard"
+import type { Product } from "@/lib/api"
 
 interface ProductGridProps {
-    products: any[];
+    products: Product[];
     viewMode: "grid" | "list";
 }
 
