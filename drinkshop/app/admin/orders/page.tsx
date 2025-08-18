@@ -16,6 +16,8 @@ import { ORDER_STATUS, ORDER_STATUS_OPTIONS } from '@/constants/order-status';
 const OrderManagement = () => {
     const [filterStatus, setFilterStatus] = useState<string>(ORDER_STATUS.ALL);
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
     const {
         orders,
@@ -27,13 +29,17 @@ const OrderManagement = () => {
         updateOrderStatus
     } = useOrderManagement();
 
-    const {
-        selectedOrder,
-        orderDetails,
-        isLoadingDetails,
-        openDetails,
-        closeDetails
-    } = useOrderDetails();
+    const orderDetails = useOrderDetails(selectedOrderId || '');
+
+    const openDetails = (orderId: string) => {
+        setSelectedOrderId(orderId);
+        setIsDetailsOpen(true);
+    };
+
+    const closeDetails = () => {
+        setSelectedOrderId(null);
+        setIsDetailsOpen(false);
+    };
 
     useEffect(() => {
         loadInitialData();
@@ -68,11 +74,10 @@ const OrderManagement = () => {
             const address = addressesMap.get(order.addressId);
 
             const addressForRow: OrderTableRowAddress | undefined = address ? {
-                ...address,
-                userId: user?.id ?? '',
-                firstName: user?.firstName ?? '',
-                lastName: user?.lastName ?? '',
-                country: address.country ?? '',
+                id: address.id,
+                address: address.address,
+                city: address.city,
+                phone: address.phone,
             } : undefined;
 
             return {
@@ -138,11 +143,11 @@ const OrderManagement = () => {
             )}
 
             {/* Order Details Dialog */}
-            {selectedOrder && (
+            {selectedOrderId && (
                 <OrderDetailsDialog
-                    selectedOrder={selectedOrder}
+                    selectedOrder={orders.find(order => order.id === selectedOrderId) || null}
                     orderDetails={orderDetails}
-                    isLoadingDetails={isLoadingDetails}
+                    isLoadingDetails={false}
                     usersMap={usersMap}
                     addressesMap={addressesMap}
                     onClose={closeDetails}

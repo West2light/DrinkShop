@@ -144,7 +144,11 @@ export default async function BlogPage() {
                     </div>
 
                     {/* Pagination */}
-                    <CustomPagination />
+                    <CustomPagination
+                        currentPage={1}
+                        totalPages={1}
+                        onPageChange={() => { }}
+                    />
                 </div>
             </div>
         </div>

@@ -63,7 +63,7 @@ const OrderTable = ({
                             order={order}
                             user={user}
                             address={address}
-                            onOpenDetails={onOpenDetails}
+                            onOpenDetails={(order) => onOpenDetails(order.id)}
                             onUpdateStatus={onUpdateStatus}
                         />
                     ))

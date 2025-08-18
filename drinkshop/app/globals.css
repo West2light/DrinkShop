@@ -113,6 +113,24 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+:root {
+  --font-geist-sans: 'Geist', sans-serif;
+  --font-geist-mono: 'Geist Mono', monospace;
+  --font-gideon-roman: 'Gideon Roman', serif;
+}
+
+.font-sans {
+  font-family: var(--font-geist-sans);
+}
+
+.font-mono {
+  font-family: var(--font-geist-mono);
+}
+
+.font-roman {
+  font-family: var(--font-gideon-roman);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

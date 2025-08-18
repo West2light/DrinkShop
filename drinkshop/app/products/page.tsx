@@ -6,6 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent"
 import { products } from "@/lib/products"
+import { Product } from "@/lib/api"
 import styles from "./products.module.css"
 import CustomPagination from "@/components/pagination/CustomPagination"
 import ProductSidebar from "@/components/products/ProductSidebar"
@@ -21,7 +22,10 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [urlSearchQuery, setUrlSearchQuery] = useState<string>("") // Separate state for URL search
   const itemsPerPage = 6
-
+  const convertedProducts: Product[] = products.map(product => ({
+    ...product,
+    id: product.id.toString() // Convert number to string
+  }))
   // Set category and search from URL params when component mounts
   useEffect(() => {
     const categoryFromUrl = searchParams.get('category')
@@ -72,7 +76,7 @@ export default function ProductsPage() {
 
   // Filter and sort products
   let filteredProducts =
-    selectedCategory === "all" ? products : products.filter((product) => product.category === selectedCategory)
+    selectedCategory === "all" ? convertedProducts : convertedProducts.filter((product) => product.category === selectedCategory)
 
   // Apply search filter (combine both local search and URL search)
   const activeSearchQuery = searchQuery.trim() || urlSearchQuery.trim()

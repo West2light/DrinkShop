@@ -1,13 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { publicApi } from "@/lib/api/axios";
 
+interface RouteParams {
+  params: { email: string };
+}
 export async function GET(
-  request: NextRequest,
-  context: { params: { email: string } }
+  request: Request,
+  { params }: { params: Promise<{ email: string }> }
 ) {
   try {
-    const email = decodeURIComponent(context.params.email);
-
+    const resolvedParams = await params;
+    const email = decodeURIComponent(resolvedParams.email);
     // Get all users and find by email
     const response = await publicApi.get("/users");
     const users = response.data || response;

@@ -11,7 +11,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  /* config options here */
+  experimental: {
+    serverComponentsExternalPackages: ['lightningcss']
+  },
+  webpack: (config) => {
+    config.externals.push({
+      'lightningcss': 'lightningcss'
+    })
+    return config
+  }
 };
 
 export default nextConfig;

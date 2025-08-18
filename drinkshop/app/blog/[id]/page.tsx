@@ -25,9 +25,10 @@ export async function generateStaticParams() {
     }
 }
 
-export default async function BlogDetailPage({ params }: { params: { id: string } }) {
+export default async function BlogDetailPage({ params }: { params: Promise<{ id: string }> }) {
     try {
-        const post = await getBlogPostById(Number.parseInt(params.id))
+        const resolvedParams = await params;
+        const post = await getBlogPostById(resolvedParams.id)
 
         // Tạo mảng breadcrumb items
         const breadcrumbItems = [
