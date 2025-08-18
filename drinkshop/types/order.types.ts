@@ -23,16 +23,18 @@ export interface OrderDetail {
   product: Product;
   quantity: number;
   price: number;
-  total: number;
+  totalPrice: number;
 }
 
 export enum OrderStatus {
-  PENDING = "Đã đặt, chưa duyệt",
+  PENDING = "Đã đặt, chờ duyệt",
   APPROVED = "Đã duyệt",
   SHIPPING = "Đang giao hàng",
   COMPLETED = "Đã hoàn thành",
   CANCELED = "Đã hủy",
+  ALL = "ALL",
 }
+
 export enum OrderStore {
   HADONG = "HÀ ĐÔNG",
 }

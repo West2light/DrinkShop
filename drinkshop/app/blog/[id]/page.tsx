@@ -1,12 +1,16 @@
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Calendar, User, Eye, ArrowLeft } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 import { getBlogPostById, getAllBlogPosts } from "@/lib/api"
 import CommentsSection from "./commentSection"
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent"
+import SocialShare from "@/components/blog/SocialShare"
+import BlogMeta from "@/components/blog/BlogMeta"
+import BackButton from "@/components/blog/BackButton"
+import BlogContent from "@/components/blog/BlogContent"
 
 // Tạo các tham số tĩnh cho trang
 export async function generateStaticParams() {
@@ -29,7 +33,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
         const breadcrumbItems = [
             { label: "Trang chủ", href: "/" },
             { label: "Blog", href: "/blog" },
-            { label: post.title }  // Item cuối không có href
+            { label: post.title }
         ];
 
         return (
@@ -45,32 +49,19 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
                     <div className="max-w-4xl mx-auto">
                         {/* Back Button */}
                         <div className="mb-6">
-                            <Link href="/blog">
-                                <Button variant="outline" className="bg-transparent">
-                                    <ArrowLeft className="w-4 h-4 mr-2" />
-                                    Quay lại Blog
-                                </Button>
-                            </Link>
+                            <BackButton href="/blog" text="Quay lại Blog" />
                         </div>
 
                         {/* Blog Header */}
                         <div className="mb-6 lg:mb-8">
                             <h1 className="text-2xl lg:text-3xl font-bold mb-4">{post.title}</h1>
-                            <div className="flex flex-wrap items-center text-sm text-gray-500 mb-4 lg:mb-6 gap-2 lg:gap-4">
-                                <div className="flex items-center space-x-1">
-                                    <Calendar className="w-4 h-4" />
-                                    <span>{new Date(post.date).toLocaleDateString("vi-VN")}</span>
-                                </div>
-                                <div className="flex items-center space-x-1">
-                                    <User className="w-4 h-4" />
-                                    <span>{post.author}</span>
-                                </div>
-                                <div className="flex items-center space-x-1">
-                                    <Eye className="w-4 h-4" />
-                                    <span>{post.views} lượt xem</span>
-                                </div>
-                                <div className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">{post.category}</div>
-                            </div>
+                            <BlogMeta
+                                date={post.date}
+                                author={post.author}
+                                views={post.views}
+                                category={post.category}
+                                className="mb-4 lg:mb-6"
+                            />
                         </div>
 
                         {/* Featured Image */}
@@ -85,43 +76,15 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
                         </div>
 
                         {/* Blog Content */}
-                        <div className="prose max-w-none">
-                            {post.content.split("\n\n").map((paragraph, index) => (
-                                <p key={index} className="mb-4 text-gray-700 leading-relaxed text-sm lg:text-base">
-                                    {paragraph}
-                                </p>
-                            ))}
-                        </div>
+                        <BlogContent content={post.content} />
 
-                        {/* Share Section */}
-                        <div className="mt-8 lg:mt-12 pt-6 border-t">
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                <div className="font-medium">Chia sẻ bài viết:</div>
-                                <div className="flex space-x-2">
-                                    <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors">
-                                        Facebook
-                                    </button>
-                                    <button className="bg-blue-400 text-white px-3 py-1 rounded text-sm hover:bg-blue-500 transition-colors">
-                                        Twitter
-                                    </button>
-                                    <button className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors">
-                                        Pinterest
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        {/* Social Share */}
+                        <SocialShare title="Chia sẻ bài viết:" />
 
                         <CommentsSection />
 
                         {/* Back to Blog */}
-                        <div className="mt-6 lg:mt-8 text-center">
-                            <Link href="/blog">
-                                <Button className="bg-black text-white hover:bg-gray-800 px-6 py-3">
-                                    <ArrowLeft className="w-4 h-4 mr-2" />
-                                    Quay lại Blog
-                                </Button>
-                            </Link>
-                        </div>
+                        <BackButton href="/blog" text="Quay lại Blog" className="mt-6" />
                     </div>
                 </div>
             </div>

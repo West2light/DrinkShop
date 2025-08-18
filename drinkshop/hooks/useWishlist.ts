@@ -10,7 +10,7 @@ interface Favorite {
 
 async function getCurrentUser(): Promise<User | null> {
     try {
-        const response = await fetch('/api/auth/me');
+        const response = await fetch('/api/auth/session');
         if (!response.ok) {
             return null;
         }

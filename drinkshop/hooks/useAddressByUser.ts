@@ -3,23 +3,17 @@ import { Address } from "@/types/user.types";
 import axios from "axios";
 
 export const useAddress = (userId: string) => {
-  const [address, setAddress] = useState<Address | null>(null);
+  const [addresses, setAddresses] = useState<Address[]>([]);
 
   useEffect(() => {
     if (!userId) return;
 
     const fetchDefaultAddress = async () => {
-      console.log(
-        "Fetching address for userId:",
-        `${process.env.NEXT_PUBLIC_API_BASE}/addresses?userId=${userId}&isDefault=true`
-      );
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE}/addresses?userId=${userId}&isDefault=true`
+          `${process.env.NEXT_PUBLIC_API_BASE}/addresses?userId=${userId}`
         );
-        console.log("Address:", response.data[0]);
-
-        setAddress(response.data[0] || null);
+        setAddresses(response.data || []);
       } catch (error) {
         console.error("Error fetching address:", error);
       }
@@ -29,6 +23,6 @@ export const useAddress = (userId: string) => {
   }, [userId]);
 
   return {
-    address,
+    addresses,
   };
 };

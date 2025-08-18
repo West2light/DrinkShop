@@ -1,9 +1,12 @@
+"use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { User, UserResponse, UserWithoutPassword } from "@/types/user.types";
-import { useUser } from "@/contexts/UserContext";
+import { UserWithoutPassword } from "@/types/user.types";
 import { removeToken, setToken } from "@/lib/utils";
-import { addCart } from "@/ultis/api/cart.api";
+import { addCart } from "@/utils/api/cart.api";
+import { useUserStore } from "@/stores/user.store";
+import { useCartStore } from "@/stores/cart.store";
 
 interface RegisterData {
   email: string;
@@ -30,7 +33,7 @@ interface UseAuth {
 
 export const useAuth = (): UseAuth => {
   const router = useRouter();
-  const { user, setUser, clearUser } = useUser();
+  const { user, setUser, clearUser } = useUserStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,25 +44,20 @@ export const useAuth = (): UseAuth => {
 
       const response = await fetch("/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       const result = await response.json();
-
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(result.message || "Registration failed");
-      }
 
-      // Redirect to login page , create cart then redirect login
+      // Tạo cart mới rồi chuyển hướng
       addCart(result.data.id);
       router.push("/login");
     } catch (err: any) {
-      const message = err.message || "Registration failed";
-      setError(message);
-      throw new Error(message);
+      setError(err.message || "Registration failed");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -72,31 +70,32 @@ export const useAuth = (): UseAuth => {
 
       const response = await fetch("/api/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       const result = await response.json();
+      if (!response.ok) throw new Error(result.message || "Login failed");
 
-      if (!response.ok) {
-        throw new Error(result.message || "Login failed");
+      // Check if 2FA is required
+      if (result.requiresTwoFactor) {
+        // Redirect to 2FA page with email
+        router.push(`/two-factor?email=${encodeURIComponent(result.email)}`);
+        return;
       }
 
+      // Normal login flow
       setToken(result.data);
       setUser(result.data);
 
-      // Redirect based on user role
       if (result.data.role === "admin") {
         router.push("/admin");
       } else {
         router.push("/");
       }
     } catch (err: any) {
-      const message = err.message || "Login failed";
-      setError(message);
-      throw new Error(message);
+      setError(err.message || "Login failed");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -109,9 +108,7 @@ export const useAuth = (): UseAuth => {
 
       const response = await fetch("/api/auth/logout", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
 
       if (!response.ok) {
@@ -120,23 +117,17 @@ export const useAuth = (): UseAuth => {
       }
 
       clearUser();
+      useCartStore.setState({ cart: null, isChange: false });
       removeToken();
+
       router.push("/login");
     } catch (err: any) {
-      const message = err.message || "Logout failed";
-      setError(message);
-      throw new Error(message);
+      setError(err.message || "Logout failed");
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  return {
-    user,
-    loading,
-    error,
-    register,
-    login,
-    logout,
-  };
+  return { user, loading, error, register, login, logout };
 };

@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { Product } from '@/types/product.types';
+import { Category } from '@/types/category.types';
 
 export const useProducts = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -9,7 +10,7 @@ export const useProducts = () => {
 
     const API_BASE = process.env.NEXT_PUBLIC_API_BASE as string;
 
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         try {
             setLoading(true);
             const response = await axios.get(`${API_BASE}/products`);
@@ -23,27 +24,20 @@ export const useProducts = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const addProduct = async (product: Omit<Product, 'id'>) => {
+    const addProduct = useCallback(async (product: Partial<Product>) => {
         try {
-            const maxId = Math.max(...products.map((p) => +p.id), 0);
-            const nextId = maxId + 1;
-
-            const response = await axios.post(`${API_BASE}/products`, {
-                ...product,
-                id: nextId.toString(),
-            });
-
-            setProducts((prev) => [...prev, { ...response.data, id: nextId }]);
+            const response = await axios.post(`${API_BASE}/products`, product);
+            setProducts((prev) => [...prev, response.data]);
             return response.data;
         } catch (err) {
             console.error('Error adding product:', err);
             throw err;
         }
-    };
+    }, []);
 
-    const editProduct = async (id: string, product: Omit<Product, 'id'>) => {
+    const updateProduct = useCallback(async (id: string, product: Partial<Product>) => {
         try {
             const response = await axios.put(`${API_BASE}/products/${id}`, product);
             setProducts((prev) =>
@@ -51,12 +45,12 @@ export const useProducts = () => {
             );
             return response.data;
         } catch (err) {
-            console.error('Error editing product:', err);
+            console.error('Error updating product:', err);
             throw err;
         }
-    };
+    }, []);
 
-    const deleteProduct = async (id: string) => {
+    const deleteProduct = useCallback(async (id: string) => {
         try {
             await axios.delete(`${API_BASE}/products/${id}`);
             setProducts((prev) => prev.filter((p) => String(p.id) !== id));
@@ -64,25 +58,25 @@ export const useProducts = () => {
             console.error('Error deleting product:', err);
             throw err;
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [fetchProducts]);
 
     return {
         products,
         loading,
         error,
         addProduct,
-        editProduct,
+        updateProduct,
         deleteProduct,
-        refresh: fetchProducts,
+        refreshProducts: fetchProducts,
     };
 };
 
 export const useCategories = () => {
-    const [categories, setCategories] = useState<string[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
 

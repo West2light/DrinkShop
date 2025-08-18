@@ -21,7 +21,7 @@ async function fetchData<T>(endpoint: string): Promise<T> {
 
 // Interfaces cho các loại dữ liệu
 export interface Slide {
-  id: number
+  id: string
   image: string
   title: string
   subtitle: string
@@ -30,10 +30,10 @@ export interface Slide {
 }
 
 export interface Product {
-  id: number
+  id: string
   name: string
-  price: string
-  originalPrice?: string
+  price: number
+  originalPrice?: number
   image: string
   category: string
   description: string
@@ -41,16 +41,17 @@ export interface Product {
   reviews: number
   inStock: boolean
   features: string[]
+  discount?: number
 }
 
 export interface Category {
-  id: number
+  id: string
   name: string
   slug: string
 }
 
 export interface BlogPost {
-  id: number
+  id: string
   title: string
   excerpt: string
   content: string
@@ -62,7 +63,7 @@ export interface BlogPost {
 }
 
 export interface Testimonial {
-  id: number
+  id: string
   name: string
   role: string
   content: string
@@ -75,10 +76,10 @@ export interface About {
 }
 
 export interface FeaturedProduct {
-  id: number
+  id: string
   name: string
-  price: string
-  originalPrice?: string
+  price: number
+  originalPrice?: number
   image: string
   countdown: {
     days: number
@@ -105,7 +106,7 @@ export async function getAllProducts(): Promise<Product[]> {
   return fetchData<Product[]>("products")
 }
 
-export async function getProductById(id: number): Promise<Product> {
+export async function getProductById(id: string): Promise<Product> {
   return fetchData<Product>(`products/${id}`)
 }
 
@@ -133,7 +134,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
   return fetchData<BlogPost[]>("blogs")
 }
 
-export async function getBlogPostById(id: number): Promise<BlogPost> {
+export async function getBlogPostById(id: string): Promise<BlogPost> {
   return fetchData<BlogPost>(`blogs/${id}`)
 }
 
@@ -157,3 +158,4 @@ export async function getFeatured(): Promise<FeaturedProduct> {
 export async function getGallery(): Promise<GalleryImage[]> {
   return fetchData<GalleryImage[]>("gallery")
 }
+

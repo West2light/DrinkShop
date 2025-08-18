@@ -29,7 +29,7 @@ import {
 import Image from "next/image";
 import titleleftdark from "@/public/Image_Rudu/titleleft-dark.png";
 import { useAddress } from "@/hooks/useAddress";
-import { useUser } from "@/contexts/UserContext";
+import { useUserStore } from "@/stores/user.store";
 import { useEffect, useState } from "react";
 import { toast, Toaster } from "sonner";
 import { Address } from "@/types/user.types";
@@ -52,7 +52,7 @@ const addAddressSchema = z.object({
 type AddAddressFormValues = z.infer<typeof addAddressSchema>;
 
 export default function AddressesPage() {
-  const { user: currentUser } = useUser();
+  const { user: currentUser } = useUserStore();
   const {
     addresses,
     loading,
@@ -62,7 +62,7 @@ export default function AddressesPage() {
     deleteAddress,
   } = useAddress(currentUser?.id);
 
-  const [editingAddressId, setEditingAddressId] = useState<number | null>(null);
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
   const [editedAddress, setEditedAddress] = useState<Partial<Address>>({});
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
@@ -111,7 +111,7 @@ export default function AddressesPage() {
   };
 
   // Handle update address
-  const handleUpdateAddress = async (addressId: number) => {
+  const handleUpdateAddress = async (addressId: string) => {
     try {
       const updatedAddress = await updateAddress(addressId, editedAddress);
       if (updatedAddress) {
@@ -154,7 +154,7 @@ export default function AddressesPage() {
   };
 
   // Handle delete address
-  const handleDeleteAddress = async (addressId: number) => {
+  const handleDeleteAddress = async (addressId: string) => {
     if (confirm("Bạn có chắc chắn muốn xóa địa chỉ này?")) {
       const success = await deleteAddress(addressId);
       if (success) {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { privateApi, publicApi } from "@/lib/api/axios";
 import { User, UserWithoutPassword } from "@/types/user.types";
-import { useUser } from "@/contexts/UserContext";
+import { useUserStore } from "@/stores/user.store";
 
 interface UpdateUserData {
   firstName?: string;
@@ -13,7 +13,7 @@ interface UpdateUserData {
 export const useAccount = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user: currentUser, setUser } = useUser();
+  const { user: currentUser, setUser } = useUserStore();
 
   const getUserById = async (
     userId: string | number

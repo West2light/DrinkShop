@@ -13,7 +13,7 @@ import { OrderDetail } from "@/types/order.types";
 import { FaStar } from "react-icons/fa6";
 import { useState } from "react";
 import Image from "next/image";
-import { submitReview } from "@/ultis/api/review.api";
+import { submitReview } from "@/utils/api/review.api";
 import { toast } from "sonner";
 
 interface ModalReviewProps {

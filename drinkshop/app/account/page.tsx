@@ -14,15 +14,14 @@ import {
 import { FormLabel } from "@/components/ui/form-label";
 import Image from "next/image";
 import titleleftdark from "@/public/Image_Rudu/titleleft-dark.png";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAccount } from "@/hooks/useAccount";
-import { useUser } from "@/contexts/UserContext";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
+import { useUserStore } from "@/stores/user.store";
 
 const formSchema = z.object({
   email: z.email({ message: "Email không hợp lệ" }).optional(),
@@ -34,7 +33,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function AccountPage() {
-  const { user: currentUser } = useUser();
+  const { user: currentUser } = useUserStore();
   const { getUserById, updateUser, loading, error } = useAccount();
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
@@ -213,6 +212,15 @@ export default function AccountPage() {
                 {loading ? "ĐANG XỬ LÝ..." : "Cập nhật thông tin"}
               </Button>
               <Button
+                type="button"
+                onClick={() => router.push("/account/security")}
+                variant="outline"
+                className="w-min tracking-tighter text-sm px-4 py-1 rounded-none cursor-pointer"
+              >
+                Cài đặt bảo mật
+              </Button>
+              <Button
+                type="button"
                 onClick={() => router.push("/")}
                 className="w-min bg-black text-white tracking-tighter text-sm px-4 py-1 rounded-none cursor-pointer hover:bg-gray-700"
               >
