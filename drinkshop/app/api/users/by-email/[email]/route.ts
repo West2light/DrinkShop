@@ -3,10 +3,10 @@ import { publicApi } from "@/lib/api/axios";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { email: string } }
+  context: { params: { email: string } }
 ) {
   try {
-    const email = decodeURIComponent(params.email);
+    const email = decodeURIComponent(context.params.email);
 
     // Get all users and find by email
     const response = await publicApi.get("/users");
