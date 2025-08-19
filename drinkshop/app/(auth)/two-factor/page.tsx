@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,7 +35,29 @@ const twoFactorSchema = z.object({
 
 type FormValues = z.infer<typeof twoFactorSchema>;
 
-export default function TwoFactorPage() {
+// Loading component
+function TwoFactorLoading() {
+  return (
+    <AuthLayout>
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">
+            Đang tải...
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+        </CardContent>
+      </Card>
+    </AuthLayout>
+  );
+}
+
+// Main component that uses useSearchParams
+function TwoFactorContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setUser } = useUserStore();
@@ -204,5 +226,14 @@ export default function TwoFactorPage() {
         </CardContent>
       </Card>
     </AuthLayout>
+  );
+}
+
+// Wrapper component with Suspense
+export default function TwoFactorPage() {
+  return (
+    <Suspense fallback={<TwoFactorLoading />}>
+      <TwoFactorContent />
+    </Suspense>
   );
 }

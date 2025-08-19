@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useLayoutStore } from "@/stores/layout.store";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -10,19 +10,12 @@ import logo3 from "@/public/Image_Rudu/logo3.jpg";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
-export default function NotFound() {
-  const setHideHeaderFooter = useLayoutStore(
-    (state) => state.setHideHeaderFooter
-  );
+// Component riêng để handle search params
+function NotFoundContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const failedSearch = searchParams.get('search');
-
-  useEffect(() => {
-    setHideHeaderFooter(true);
-    return () => setHideHeaderFooter(false);
-  }, [setHideHeaderFooter]);
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -129,5 +122,22 @@ export default function NotFound() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NotFound() {
+  const setHideHeaderFooter = useLayoutStore(
+    (state) => state.setHideHeaderFooter
+  );
+
+  useEffect(() => {
+    setHideHeaderFooter(true);
+    return () => setHideHeaderFooter(false);
+  }, [setHideHeaderFooter]);
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <NotFoundContent />
+    </Suspense>
   );
 }

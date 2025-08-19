@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "./config"
 
 // Địa chỉ của JSON server
-const API_URL = process.env.NEXT_PUBLIC_API_ENDPOINT || "http://localhost:3001"
+const API_URL = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001"
 
 // Hàm helper để fetch data 
 async function fetchData<T>(endpoint: string): Promise<T> {
