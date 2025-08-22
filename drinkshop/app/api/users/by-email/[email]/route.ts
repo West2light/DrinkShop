@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 import { publicApi } from "@/lib/api/axios";
 
-interface RouteParams {
-  params: { email: string };
-}
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ email: string }> }
@@ -11,12 +8,13 @@ export async function GET(
   try {
     const resolvedParams = await params;
     const email = decodeURIComponent(resolvedParams.email);
+
     // Get all users and find by email
     const response = await publicApi.get("/users");
     const users = response.data || response;
 
     const user = Array.isArray(users)
-      ? users.find((u: unknown) => (u as { email: string }).email === email)
+      ? users.find((u: any) => u.email === email)
       : null;
 
     if (!user) {

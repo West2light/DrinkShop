@@ -98,7 +98,7 @@ const Footer = () => {
                 placeholder="Enter your email"
                 className="w-full placeholder:italic placeholder:text-gray-500 rounded-none !text-xs border-black"
               />
-              <Button className="rounded-none bg-black hover:bg-gray-700 cursor-pointer">
+              <Button className="rounded-none bg-black dark:bg-gray-800 hover:bg-gray-700 dark:hover:bg-gray-600 cursor-pointer">
                 Gửi
               </Button>
             </div>

@@ -668,7 +668,7 @@
       "id": "1",
       "userId": "2",
       "addressId": "1",
-      "status": "Tất cả",
+      "status": "Đang giao hàng",
       "store": "HÀ ĐÔNG",
       "totalPrice": 2605000,
       "subtotal": 2590000,
@@ -677,7 +677,7 @@
       "discount": 0,
       "paymentMethod": "Thanh toán khi nhận hàng",
       "orderDate": "2024-02-15T08:30:00.000Z",
-      "updatedAt": "2025-08-15T02:19:50.937Z",
+      "updatedAt": "2025-08-21T02:59:13.557Z",
       "isReviewed": true
     },
     {
@@ -708,7 +708,7 @@
       "discount": 0,
       "paymentMethod": "Thanh toán khi nhận hàng",
       "orderDate": "2024-03-10T10:15:00.000Z",
-      "updatedAt": "2024-03-10T10:15:00.000Z"
+      "updatedAt": "2025-08-21T03:02:48.764Z"
     },
     {
       "id": "4",
@@ -820,7 +820,7 @@
       "id": "13d0",
       "userId": "2",
       "addressId": "2",
-      "status": "Đã đặt, chờ duyệt",
+      "status": "Đã duyệt",
       "store": "HÀ ĐÔNG",
       "totalPrice": 905000,
       "subtotal": 890000,
@@ -829,7 +829,7 @@
       "discount": 0,
       "paymentMethod": "Thanh toán khi nhận hàng",
       "orderDate": "2025-08-06T05:51:39.333Z",
-      "updatedAt": "2025-08-06T05:51:39.333Z"
+      "updatedAt": "2025-08-21T03:09:30.775Z"
     },
     {
       "id": "fa04",
@@ -847,19 +847,34 @@
       "updatedAt": "2025-08-13T05:51:32.149Z"
     },
     {
-      "id": "f350",
+      "id": "3e9c",
       "userId": "2",
-      "addressId": "2",
+      "addressId": "1",
       "status": "Đã đặt, chờ duyệt",
       "store": "HÀ ĐÔNG",
-      "totalPrice": 695000,
-      "subtotal": 680000,
+      "totalPrice": 3515000,
+      "subtotal": 3500000,
+      "totalItem": 5,
+      "shippingFee": 15000,
+      "discount": 0,
+      "paymentMethod": "Thanh toán khi nhận hàng",
+      "orderDate": "2025-08-19T11:22:10.913Z",
+      "updatedAt": "2025-08-19T11:22:10.924Z"
+    },
+    {
+      "id": "1eb4",
+      "userId": "2",
+      "addressId": "1",
+      "status": "Đã đặt, chờ duyệt",
+      "store": "HÀ ĐÔNG",
+      "totalPrice": 15680,
+      "subtotal": 680,
       "totalItem": 1,
       "shippingFee": 15000,
       "discount": 0,
       "paymentMethod": "Thanh toán khi nhận hàng",
-      "orderDate": "2025-08-18T15:32:09.120Z",
-      "updatedAt": "2025-08-18T15:32:09.120Z"
+      "orderDate": "2025-08-19T11:29:22.719Z",
+      "updatedAt": "2025-08-19T11:29:22.719Z"
     }
   ],
   "orderDetails": [
@@ -1226,10 +1241,10 @@
         "description": "Rượu vang hồng Đà Lạt với màu sắc quyến rũ và hương vị nhẹ nhàng.",
         "price": 370000,
         "originalPrice": 450000,
-        "image": "Image_Rudu/wine8.jpg",
+        "image": "/Product/8.jpg",
         "images": [
-          "Image_Rudu/wine8.jpg",
-          "Image_Rudu/wine9.jpg"
+          "/Product/8.jpg",
+          "/Product/9.jpg"
         ],
         "categoryId": "19",
         "stock": 25,
@@ -1245,7 +1260,7 @@
       },
       "quantity": 1,
       "price": 370000,
-      "total": 370000
+      "totalPrice": 370000
     },
     {
       "id": "828f",
@@ -1277,7 +1292,7 @@
       },
       "quantity": 2,
       "price": 2500000,
-      "total": 5000000
+      "totalPrice": 5000000
     },
     {
       "id": "0db4",
@@ -1290,10 +1305,10 @@
         "description": "Rượu vang trắng Đà Lạt với hương vị tươi mát, thích hợp cho mùa hè.",
         "price": 370000,
         "originalPrice": 450000,
-        "image": "/Product/5.jpg",
+        "image": "/Product/6.jpg",
         "images": [
-          "/Product/5.jpg",
-          "/Product/6.jpg"
+          "/Product/6.jpg",
+          "/Product/7.jpg"
         ],
         "categoryId": "19",
         "stock": 40,
@@ -1309,7 +1324,7 @@
       },
       "quantity": 1,
       "price": 370000,
-      "total": 370000
+      "totalPrice": 370000
     },
     {
       "id": "710a",
@@ -1341,7 +1356,7 @@
       },
       "quantity": 5,
       "price": 370000,
-      "total": 1850000
+      "totalPrice": 1850000
     },
     {
       "id": "2c61",
@@ -1366,7 +1381,7 @@
       },
       "quantity": 1,
       "price": "850.000",
-      "total": 850
+      "totalPrice": 850000
     },
     {
       "id": "0824",
@@ -1392,7 +1407,7 @@
       },
       "quantity": 1,
       "price": "590.000",
-      "total": 590
+      "totalPrice": 590000
     },
     {
       "id": "c8af",
@@ -1418,7 +1433,7 @@
       },
       "quantity": 1,
       "price": 890000,
-      "total": 890000
+      "totalPrice": 890000
     },
     {
       "id": "7ba9",
@@ -1444,7 +1459,7 @@
       },
       "quantity": 1,
       "price": 1580000,
-      "total": 1580000
+      "totalPrice": 1580000
     },
     {
       "id": "5d70",
@@ -1496,25 +1511,133 @@
       },
       "quantity": 5,
       "price": 890000,
-      "total": 4450000
+      "totalPrice": 4450000
     },
     {
-      "id": "d676",
-      "orderId": "f350",
+      "id": "3f4f",
+      "orderId": "3e9c",
+      "productId": "10",
+      "product": {
+        "id": "10",
+        "name": "PRIMARIO PUGLIA 2000",
+        "price": 890000,
+        "originalPrice": 980000,
+        "image": "/Product/10.jpg",
+        "category": "Rượu Vang Đỏ",
+        "description": "Rượu vang đỏ vintage từ vùng Puglia, Italia. Được sản xuất từ năm 2000 với hương vị đậm đà và truyền thống.",
+        "rating": 4,
+        "reviews": 15,
+        "stock": 100,
+        "features": [
+          "Xuất xứ: Italia",
+          "Độ cồn: 13.5%",
+          "Dung tích: 750ml",
+          "Năm sản xuất: 2000"
+        ],
+        "categoryId": 3,
+        "status": "",
+        "slug": "2"
+      },
+      "quantity": 2,
+      "price": 890000,
+      "totalPrice": 1780000
+    },
+    {
+      "id": "1967",
+      "orderId": "3e9c",
+      "productId": "11",
+      "product": {
+        "id": "11",
+        "name": "ADMIT ONE RED BLEND",
+        "price": 750000,
+        "originalPrice": 850000,
+        "image": "/Product/11.jpg",
+        "category": "Rượu Vang Đỏ",
+        "description": "Rượu vang đỏ blend hiện đại với thiết kế nhãn độc đáo. Hương vị cân bằng giữa các giống nho khác nhau tạo nên sự phức hợp thú vị.",
+        "rating": 4,
+        "reviews": 22,
+        "stock": 400,
+        "features": [
+          "Xuất xứ: Úc",
+          "Độ cồn: 14%",
+          "Dung tích: 750ml",
+          "Phong cách: Modern Blend"
+        ]
+      },
+      "quantity": 1,
+      "price": 750000,
+      "totalPrice": 750000
+    },
+    {
+      "id": "926f",
+      "orderId": "3e9c",
+      "productId": "12",
+      "product": {
+        "id": "12",
+        "name": "EL GUAPO RED WINE",
+        "price": 520000,
+        "originalPrice": 580000,
+        "image": "/Product/12.jpg",
+        "category": "Rượu Vang Đỏ",
+        "description": "Rượu vang đỏ với thiết kế nhãn nghệ thuật đầy màu sắc, thể hiện tinh thần vui tươi và sáng tạo. Hương vị trái cây đậm đà.",
+        "rating": 4,
+        "reviews": 28,
+        "stock": 100,
+        "features": [
+          "Xuất xứ: Argentina",
+          "Độ cồn: 13.5%",
+          "Dung tích: 750ml",
+          "Phong cách: Artistic"
+        ]
+      },
+      "quantity": 1,
+      "price": 520000,
+      "totalPrice": 520000
+    },
+    {
+      "id": "a552",
+      "orderId": "3e9c",
+      "productId": "1",
+      "product": {
+        "id": "1",
+        "name": "LA CAPRA VIOGNIER",
+        "price": 450000,
+        "originalPrice": 520000,
+        "image": "/Product/1.jpg",
+        "category": "Rượu Vang Trắng",
+        "description": "Rượu vang trắng Viognier với hương thơm đặc trưng của hoa và trái cây nhiệt đới. Vị cân bằng giữa độ chua tự nhiên và độ ngọt nhẹ.",
+        "rating": 4,
+        "reviews": 23,
+        "stock": 100,
+        "features": [
+          "Xuất xứ: Tây Ban Nha",
+          "Độ cồn: 13.5%",
+          "Dung tích: 750ml",
+          "Nhiệt độ phục vụ: 8-10°C"
+        ],
+        "categoryId": 4,
+        "isNew": true,
+        "slug": "2"
+      },
+      "quantity": 1,
+      "price": 450000,
+      "totalPrice": 450000
+    },
+    {
+      "id": "0919",
+      "orderId": "1eb4",
       "productId": 2,
       "product": {
-        "status": "active",
-        "reviewCount": 18,
         "id": 2,
         "name": "RAMONDA ROURES",
-        "price": 680000,
-        "originalPrice": 750000,
+        "price": "680.000",
+        "originalPrice": "750.000",
         "image": "/Product/2.jpg",
         "category": "Rượu Vang Đỏ",
         "description": "Rượu vang đỏ cao cấp với thiết kế nhãn nghệ thuật độc đáo. Hương vị phức hợp với note của trái cây chín và gia vị.",
         "rating": 5,
         "reviews": 18,
-        "stock": 100,
+        "inStock": true,
         "features": [
           "Xuất xứ: Tây Ban Nha",
           "Độ cồn: 14%",
@@ -1523,7 +1646,7 @@
         ]
       },
       "quantity": 1,
-      "price": 680000,
+      "price": "680.000",
       "totalPrice": 680000
     }
   ],
@@ -1531,10 +1654,35 @@
     {
       "id": "1",
       "userId": "2",
-      "items": [],
-      "totalPrice": 0,
+      "items": [
+        {
+          "productId": "11",
+          "product": {
+            "status": "active",
+            "reviewCount": 22,
+            "id": "11",
+            "name": "ADMIT ONE RED BLEND",
+            "price": 750000,
+            "originalPrice": 850000,
+            "image": "/Product/11.jpg",
+            "category": "Rượu Vang Đỏ",
+            "description": "Rượu vang đỏ blend hiện đại với thiết kế nhãn độc đáo. Hương vị cân bằng giữa các giống nho khác nhau tạo nên sự phức hợp thú vị.",
+            "rating": 4,
+            "reviews": 22,
+            "stock": 0,
+            "features": [
+              "Xuất xứ: Úc",
+              "Độ cồn: 14%",
+              "Dung tích: 750ml",
+              "Phong cách: Modern Blend"
+            ]
+          },
+          "quantity": 1
+        }
+      ],
+      "totalPrice": 750000,
       "createdAt": "2024-02-15T08:30:00.000Z",
-      "updatedAt": "2025-08-18T15:31:40.152Z"
+      "updatedAt": "2025-08-22T02:58:02.902Z"
     },
     {
       "id": "2",
@@ -1916,6 +2064,107 @@
       "expiresAt": "2025-08-14T05:49:59.661Z",
       "used": false,
       "createdAt": "2025-08-14T05:44:59.661Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "1",
+      "title": "Đơn hàng đã bị hủy",
+      "message": "Mã đơn hàng: 7",
+      "createdAt": "2025-08-11T07:31:53.497Z",
+      "userId": "2",
+      "isSeen": true,
+      "link": "/account/orders/7"
+    },
+    {
+      "id": "2",
+      "title": "Đơn hàng đã hoàn thành",
+      "message": "Mã đơn hàng: 50ea",
+      "createdAt": "2025-08-12T07:31:53.497Z",
+      "userId": "2",
+      "isSeen": true,
+      "link": "/account/orders/50ea"
+    },
+    {
+      "id": "3",
+      "title": "Đặt hàng thành công",
+      "message": "Mã đơn hàng: 13d0",
+      "createdAt": "2025-08-11T07:31:53.497Z",
+      "userId": "2",
+      "isSeen": true,
+      "link": "/account/orders/13d0"
+    },
+    {
+      "id": "4",
+      "title": "Đơn hàng đã được duyệt",
+      "message": "Mã đơn hàng: fa04",
+      "createdAt": "2025-08-12T07:31:53.497Z",
+      "userId": "2",
+      "isSeen": true,
+      "link": "/account/orders/fa04"
+    },
+    {
+      "id": "5",
+      "title": "Đặt hàng thành công",
+      "message": "Mã đơn hàng: fa04",
+      "createdAt": "2025-08-11T07:31:53.497Z",
+      "userId": "2",
+      "isSeen": true,
+      "link": "/account/orders/fa04"
+    },
+    {
+      "id": "6",
+      "title": "Đơn hàng đã được duyệt",
+      "message": "Mã đơn hàng: fa04",
+      "createdAt": "2025-08-12T07:31:53.497Z",
+      "userId": "2",
+      "isSeen": true,
+      "link": "/account/orders/fa04"
+    },
+    {
+      "id": "1fa2",
+      "userId": "2",
+      "title": "Đặt hàng thành công",
+      "message": "Đơn hàng #3e9c",
+      "isSeen": true,
+      "createdAt": "2025-08-19T11:22:11.283Z",
+      "link": "/account/orders/3e9c"
+    },
+    {
+      "id": "7b29",
+      "userId": "2",
+      "title": "Đặt hàng thành công",
+      "message": "Đơn hàng #1eb4",
+      "isSeen": true,
+      "createdAt": "2025-08-19T11:29:22.783Z",
+      "link": "/account/orders/1eb4"
+    },
+    {
+      "id": "0591",
+      "userId": "3",
+      "title": "Cập nhật đơn hàng #3",
+      "message": "Trạng thái đơn hàng của bạn đã được cập nhật thành: Tất cả",
+      "isSeen": false,
+      "createdAt": "2025-08-21T03:02:46.702Z",
+      "link": "/orders/3"
+    },
+    {
+      "id": "82f4",
+      "userId": "3",
+      "title": "Cập nhật đơn hàng #3",
+      "message": "Trạng thái đơn hàng của bạn đã được cập nhật thành: Đã hoàn thành",
+      "isSeen": false,
+      "createdAt": "2025-08-21T03:02:48.790Z",
+      "link": "/orders/3"
+    },
+    {
+      "id": "1ef7",
+      "userId": "2",
+      "title": "Cập nhật đơn hàng #13d0",
+      "message": "Trạng thái đơn hàng của bạn đã được cập nhật thành: Đã duyệt",
+      "isSeen": true,
+      "createdAt": "2025-08-21T03:09:30.802Z",
+      "link": "/orders/13d0"
     }
   ]
 }

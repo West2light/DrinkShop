@@ -7,9 +7,9 @@ export const ORDER_STATUS = {
   CANCELLED: "Đã hủy",
 } as const;
 
-export const ORDER_STATUS_OPTIONS = Object.keys(ORDER_STATUS).map((key) => ({
-  label: ORDER_STATUS[key as keyof typeof ORDER_STATUS],
-  value: key,
+export const ORDER_STATUS_OPTIONS = Object.entries(ORDER_STATUS).map(([key, value]) => ({
+  label: value,
+  value: value,
 }));
 
 export const ORDER_STATUSES = Object.values(ORDER_STATUS);

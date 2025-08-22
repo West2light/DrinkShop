@@ -14,6 +14,7 @@ import GallerySection from "@/components/sections/GallerySection";
 import BestSellersSection from "@/components/sections/BestSellersSection";
 import BlogSection from "@/components/sections/BlogSection";
 import TestimonialSection from "@/components/sections/TestimonialSection";
+import ProductCompareButton from "@/components/ProductCompareButton";
 
 export default async function HomePage() {
   // Fetch data in parallel
@@ -33,8 +34,6 @@ export default async function HomePage() {
       getGallery().catch(() => []),
     ]);
 
-
-
   // Fetch gallery data separately
   const galleryData = await getGallery().catch(() => []);
 
@@ -47,6 +46,7 @@ export default async function HomePage() {
       <BestSellersSection products={bestSellers} />
       <BlogSection posts={blogPosts} />
       <TestimonialSection testimonials={testimonials} />
+      <ProductCompareButton />
     </div>
   );
 }

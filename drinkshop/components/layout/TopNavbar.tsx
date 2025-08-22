@@ -8,7 +8,8 @@ import { Input } from "../ui/input";
 import { useUserStore } from "@/stores/user.store";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "../ui/button";
-
+import { ThemeSwitcher } from "@/components/theme";
+import { ROUTE_MAP } from "@/constants/route-map";
 const commonNavItems = [
   { href: "/account", label: "Tài khoản của tôi" },
   { href: "/account/addresses", label: "Địa chỉ" },
@@ -23,63 +24,7 @@ const guestNavItems = [
 ];
 
 // Route mappings for smart search
-const routeMap = {
-  // Vietnamese route keywords
-  "trang chủ": "/",
-  "trang chu": "/",
-  "home": "/",
-  "sản phẩm": "/products",
-  "san pham": "/products",
-  "products": "/products",
-  "giỏ hàng": "/cart",
-  "gio hang": "/cart",
-  "cart": "/cart",
-  "tài khoản": "/account",
-  "tai khoan": "/account",
-  "account": "/account",
-  "đăng nhập": "/login",
-  "dang nhap": "/login",
-  "login": "/login",
-  "đăng ký": "/register",
-  "dang ky": "/register",
-  "register": "/register",
-  "blog": "/blog",
-  "tin tức": "/blog",
-  "tin tuc": "/blog",
-  "liên hệ": "/lien-he",
-  "lien he": "/lien-he",
-  "contact": "/lien-he",
-  "giới thiệu": "/gioi-thieu",
-  "gioi thieu": "/gioi-thieu",
-  "about": "/gioi-thieu",
-  "địa chỉ": "/account/addresses",
-  "dia chi": "/account/addresses",
-  "addresses": "/account/addresses",
-  "đơn hàng": "/account/orders",
-  "don hang": "/account/orders",
-  "orders": "/account/orders",
-  "danh sách ưa thích": "/account/wishlist",
-  "danh sach ua thich": "/account/wishlist",
-  "wishlist": "/account/wishlist",
-  "yêu thích": "/account/wishlist",
-  "yeu thich": "/account/wishlist",
-  // Product categories
-  "rượu vang đỏ": "/products?category=Rượu Vang Đỏ",
-  "ruou vang do": "/products?category=Rượu Vang Đỏ",
-  "red wine": "/products?category=Rượu Vang Đỏ",
-  "rượu vang trắng": "/products?category=Rượu Vang Trắng",
-  "ruou vang trang": "/products?category=Rượu Vang Trắng",
-  "white wine": "/products?category=Rượu Vang Trắng",
-  "champagne": "/products?category=Champagne",
-  "rượu vang rosé": "/products?category=Rượu Vang Rosé",
-  "ruou vang rose": "/products?category=Rượu Vang Rosé",
-  "rosé": "/products?category=Rượu Vang Rosé",
-  "rose": "/products?category=Rượu Vang Rosé",
-  "rượu vang ngọt": "/products?category=Rượu Vang Ngọt",
-  "ruou vang ngot": "/products?category=Rượu Vang Ngọt",
-  "sweet wine": "/products?category=Rượu Vang Ngọt",
-};
-
+const routeMap = ROUTE_MAP;
 const TopNavbar = () => {
   const { user } = useUserStore();
   const { logout } = useAuth();
@@ -94,7 +39,7 @@ const TopNavbar = () => {
     }
   };
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (!searchQuery.trim()) return;
 
     const query = searchQuery.trim().toLowerCase();
@@ -107,12 +52,9 @@ const TopNavbar = () => {
       router.push(matchedRoute);
     } else {
       // Check if there are any products matching the search
-
       // Import products to check if search has results
-      const productsModule = await import("@/lib/products");
-      const products = productsModule.products;
-      type Product = { name: string; description?: string };
-      const hasProductResults = products.some((product: Product) =>
+      const { products } = require("@/lib/products");
+      const hasProductResults = products.some((product: any) =>
         product.name.toLowerCase().includes(query) ||
         product.description?.toLowerCase().includes(query)
       );
@@ -137,9 +79,9 @@ const TopNavbar = () => {
   };
 
   return (
-    <nav className="w-full bg-white border-b px-72">
+    <nav className="w-full bg-background border-b px-72">
       <div className="flex justify-between items-center h-7 text-xs tracking-tight">
-        <div className="flex items-center space-x-6 text-black">
+        <div className="flex items-center space-x-6 text-foreground">
           {commonNavItems.map((item) => (
             <Link key={item.href} href={item.href} className="hover:underline">
               {item.label}

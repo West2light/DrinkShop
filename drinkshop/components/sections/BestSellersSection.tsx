@@ -4,10 +4,9 @@ import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/products/ProductCard";
 import ProductCardSkeleton from "@/components/products/ProductCardSkeleton";
-import { Product } from '@/lib/api';
 
 interface BestSellersSectionProps {
-    products: Product[];
+    products: any[];
     title?: string;
     imageUrl?: string;
     buttonText?: string;

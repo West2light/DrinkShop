@@ -113,24 +113,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-:root {
-  --font-geist-sans: 'Geist', sans-serif;
-  --font-geist-mono: 'Geist Mono', monospace;
-  --font-gideon-roman: 'Gideon Roman', serif;
-}
-
-.font-sans {
-  font-family: var(--font-geist-sans);
-}
-
-.font-mono {
-  font-family: var(--font-geist-mono);
-}
-
-.font-roman {
-  font-family: var(--font-gideon-roman);
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -138,5 +120,36 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Smooth theme color transitions only */
+  *,
+  *::before,
+  *::after {
+    transition-property: color, background-color, border-color,
+      text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+
+  /* Root theme transitions */
+  html {
+    transition: color-scheme 300ms ease-in-out;
+  }
+
+  body {
+    transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
+  }
+
+  /* Disable transitions for reduced motion users */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0ms !important;
+      transition-delay: 0ms !important;
+      animation-duration: 0ms !important;
+      animation-delay: 0ms !important;
+    }
   }
 }

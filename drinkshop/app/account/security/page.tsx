@@ -25,7 +25,7 @@ export default function SecurityPage() {
   const { getUserById, updateUser } = useAccount();
   const [loading, setLoading] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-  const [userDetails, setUserDetails] = useState<unknown>(null);
+  const [userDetails, setUserDetails] = useState<any>(null);
 
   // Load user details
   useEffect(() => {
@@ -67,12 +67,8 @@ export default function SecurityPage() {
           twoFactorEnabled: enabled,
         });
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        toast.error(err.message);
-      } else {
-        toast.error("Có lỗi xảy ra");
-      }
+    } catch (err: any) {
+      toast.error(err.message || "Có lỗi xảy ra");
       // Revert the switch
       setTwoFactorEnabled(!enabled);
     } finally {
@@ -88,12 +84,8 @@ export default function SecurityPage() {
 
       await authService.twoFactor.sendCode(user.email);
       toast.success("Mã test đã được gửi đến email của bạn!");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        toast.error(err.message);
-      } else {
-        toast.error("Không thể gửi mã test");
-      }
+    } catch (err: any) {
+      toast.error(err.message || "Không thể gửi mã test");
     } finally {
       setLoading(false);
     }

@@ -30,6 +30,7 @@ import { Address } from "@/types/user.types";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ModalAddress from "@/components/address/ModalAddress";
 import { useCartStore } from "@/stores/cart.store";
+import { addNotification } from "@/utils/api/notification.api";
 
 const CheckoutPage = () => {
   const { user: currentUser } = useUserStore();
@@ -206,7 +207,12 @@ const CheckoutPage = () => {
       }));
 
       await Promise.all([createOrderDetails(orderDetails), clearCart(cart)]);
-
+      await addNotification(
+        userId!,
+        "Đặt hàng thành công",
+        `Đơn hàng #${orderId}`,
+        `/account/orders/${orderId}`
+      );
       setCart({ ...cart, items: [], totalPrice: 0 });
       setIsChange(false);
 

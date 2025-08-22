@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Order } from '@/types/order.types';
 import { User } from '@/types/user.types';
+import { addNotification } from '@/utils/api/notification.api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE;
 
@@ -30,12 +31,11 @@ const apiService = {
     }
 };
 
-
 export interface Address {
-    country: string;
     id: string;
     address: string;
     city: string;
+    country: string;
     phone: string;
 }
 
@@ -89,20 +89,28 @@ export const useOrderManagement = () => {
                 )
             );
 
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                await addNotification(
+                    order.userId,
+                    `Cập nhật đơn hàng #${orderId}`,
+                    `Trạng thái đơn hàng của bạn đã được cập nhật thành: ${newStatus}`,
+                    `/orders/${orderId}`
+                );
+            }
+
             toast.success(`Cập nhật trạng thái đơn hàng #${orderId} thành công!`, {
                 description: `Trạng thái đã được thay đổi thành: ${newStatus}`,
             });
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Đã xảy ra lỗi không xác định';
-            setError('Lỗi khi cập nhật trạng thái đơn hàng');
-
+            setError(`Lỗi khi cập nhật trạng thái đơn hàng: ${errorMessage}`);
             toast.error('Cập nhật trạng thái thất bại!', {
                 description: errorMessage,
             });
-
             await loadInitialData();
         }
-    }, [loadInitialData]);
+    }, [loadInitialData, orders]);
 
     return {
         orders,

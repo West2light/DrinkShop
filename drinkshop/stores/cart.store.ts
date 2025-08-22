@@ -21,7 +21,7 @@ export const useCartStore = create<CartState>((set) => ({
     }
     try {
       const res = await publicApi.get(`/carts?userId=${userId}`);
-      set({ cart: res.data[0] || null });
+      set({ cart: res[0] || null });
     } catch (error) {
       console.error("Error fetching cart:", error);
       set({ cart: null });

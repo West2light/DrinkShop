@@ -1,4 +1,5 @@
 import React from 'react';
+import { toast } from 'sonner';
 
 import {
     TableCell,
@@ -15,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Order } from '@/types/order.types';
 import { User } from '@/types/user.types';
 import { Address } from '@/types/address.types';
-import { ORDER_STATUSES } from '@/constants/order-status';
+import { ORDER_STATUSES, ORDER_STATUS } from '@/constants/order-status';
 import { DATE_FORMATS } from '@/constants/date';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { formatOrderDate, formatPrice } from '@/utils/orderCalculations';
@@ -46,6 +47,8 @@ const OrderTableRow = React.memo<OrderTableRowProps>(({
         );
     }
 
+    const isStatusEditable = order.status !== ORDER_STATUS.COMPLETED && order.status !== ORDER_STATUS.CANCELLED;
+
     const handleOpenDetails = () => {
         try {
             if (!order) {
@@ -64,13 +67,20 @@ const OrderTableRow = React.memo<OrderTableRowProps>(({
                 console.error('Cannot update status: order or order.id is undefined');
                 return;
             }
+
+            // Kiểm tra xem có thể cập nhật trạng thái không
+            if (!isStatusEditable) {
+                toast.error('Không thể cập nhật trạng thái', {
+                    description: `Đơn hàng đã ${order.status.toLowerCase()} không thể thay đổi trạng thái`,
+                });
+                return;
+            }
+
             onUpdateStatus(order.id, newStatus);
         } catch (error) {
             console.error('Error updating order status:', error);
         }
     };
-
-
 
     return (
         <TableRow key={order.id}>
@@ -102,9 +112,9 @@ const OrderTableRow = React.memo<OrderTableRowProps>(({
                 <Select
                     value={order.status || ''}
                     onValueChange={handleStatusUpdate}
-                    disabled={!order || !onUpdateStatus}
+                    disabled={!order || !onUpdateStatus || !isStatusEditable}
                 >
-                    <SelectTrigger className="w-[140px]">
+                    <SelectTrigger className={`w-[140px] ${!isStatusEditable ? 'opacity-50 cursor-not-allowed' : ''}`}>
                         <SelectValue placeholder="Chọn trạng thái" />
                     </SelectTrigger>
                     <SelectContent>

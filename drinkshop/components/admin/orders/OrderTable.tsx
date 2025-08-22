@@ -30,7 +30,7 @@ interface OrderTableProps {
     }[];
     searchQuery: string;
     filterStatus: string;
-    onOpenDetails: (orderId: string) => void;
+    onOpenDetails: (order: Order) => void;
     onUpdateStatus: (orderId: string, newStatus: string) => void;
 }
 
@@ -63,7 +63,7 @@ const OrderTable = ({
                             order={order}
                             user={user}
                             address={address}
-                            onOpenDetails={(order) => onOpenDetails(order.id)}
+                            onOpenDetails={() => onOpenDetails(order)}
                             onUpdateStatus={onUpdateStatus}
                         />
                     ))

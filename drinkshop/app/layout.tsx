@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Gideon_Roman } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/providers/SessionProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import ClientLayout from "@/components/layout/ClientLayout";
 
 const geistSans = Geist({
@@ -30,21 +31,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Geist:wght@100;200;300;400;500;600;700;800;900&family=Geist+Mono:wght@100;200;300;400;500;600;700;800;900&family=Gideon+Roman:wght@400&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="antialiased font-sans">
-        <SessionProvider>
-          <div className="font-roman">
-            <ClientLayout>{children}</ClientLayout>
-          </div>
-        </SessionProvider>
+    <html lang="vi" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${gideonRoman.variable} antialiased`}
+      >
+        <ThemeProvider>
+          <SessionProvider>
+            <div className="font-roman">
+              <ClientLayout>{children}</ClientLayout>
+            </div>
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

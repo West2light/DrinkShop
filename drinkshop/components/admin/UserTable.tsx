@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { User } from '@/types/user.types';
 import { getUsers, deleteUser } from '@/services/userApi';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,6 @@ import {
 } from '../ui/alert-dialog';
 import { toast, Toaster } from 'sonner';
 import { Loader2 } from 'lucide-react';
-import UserForm from './UserForm';
 
 interface Column {
     key: keyof User | 'actions';
@@ -36,14 +35,16 @@ interface Props {
     onEdit: (user: User) => void;
 }
 
-export default function UserTable({ onEdit }: Props) {
+export interface UserTableRef {
+    reloadUsers: () => void;
+}
+
+const UserTable = forwardRef<UserTableRef, Props>(({ onEdit }, ref) => {
     const [users, setUsers] = useState<User[]>([]);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [editingUser, setEditingUser] = useState<User | null>(null);
-    const [showForm, setShowForm] = useState(false);
 
     const loadUsers = useCallback(async () => {
         setIsLoading(true);
@@ -58,6 +59,10 @@ export default function UserTable({ onEdit }: Props) {
             setIsLoading(false);
         }
     }, []);
+
+    useImperativeHandle(ref, () => ({
+        reloadUsers: loadUsers
+    }), [loadUsers]);
 
     const handleDeleteClick = (user: User) => {
         setUserToDelete(user);
@@ -84,16 +89,6 @@ export default function UserTable({ onEdit }: Props) {
         setUserToDelete(null);
     };
 
-    const handleEdit = (user: User) => {
-        setEditingUser(user);
-        setShowForm(true);
-    };
-
-    const handleAddNew = () => {
-        setEditingUser(null);
-        setShowForm(true);
-    };
-
     const columns: Column[] = [
         { key: 'id', label: 'ID' },
         { key: 'firstName', label: 'First Name' },
@@ -111,7 +106,7 @@ export default function UserTable({ onEdit }: Props) {
             render: (user: User) => (
                 <div className="flex gap-2">
                     <Button
-                        onClick={() => handleEdit(user)}
+                        onClick={() => onEdit(user)}
                         variant="outline"
                         size="sm"
                         className="text-blue-600 hover:text-blue-800"
@@ -138,13 +133,6 @@ export default function UserTable({ onEdit }: Props) {
     return (
         <>
             <Toaster position="top-right" richColors />
-            {showForm && (
-                <UserForm
-                    user={editingUser}
-                    onSave={() => setShowForm(false)}
-                    onReload={loadUsers} // Pass loadUsers to UserForm
-                />
-            )}
             {isLoading ? (
                 <div className="flex justify-center items-center h-64">
                     <Loader2 className="h-8 w-8 animate-spin" />
@@ -203,4 +191,8 @@ export default function UserTable({ onEdit }: Props) {
             </AlertDialog>
         </>
     );
-}
+});
+
+UserTable.displayName = 'UserTable';
+
+export default UserTable;

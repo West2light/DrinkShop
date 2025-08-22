@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UserWithoutPassword } from "@/types/user.types";
 import { removeToken, setToken } from "@/lib/utils";
 import { addCart } from "@/utils/api/cart.api";
 import { useUserStore } from "@/stores/user.store";
 import { useCartStore } from "@/stores/cart.store";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface RegisterData {
   email: string;
@@ -34,6 +35,7 @@ interface UseAuth {
 export const useAuth = (): UseAuth => {
   const router = useRouter();
   const { user, setUser, clearUser } = useUserStore();
+  const { clearNotifications } = useNotifications();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -117,6 +119,7 @@ export const useAuth = (): UseAuth => {
       }
 
       clearUser();
+      clearNotifications();
       useCartStore.setState({ cart: null, isChange: false });
       removeToken();
 

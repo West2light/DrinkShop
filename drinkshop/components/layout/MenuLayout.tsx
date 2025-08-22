@@ -38,6 +38,11 @@ const menuItems: MenuItem[] = [
         text: "Quản lý đơn hàng",
         href: "/admin/orders",
     },
+    {
+        icon: FaPlus,
+        text: "Thêm slider",
+        href: "/admin/add-slider",
+    },
 ];
 
 export function AdminSidebar() {

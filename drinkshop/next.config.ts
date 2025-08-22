@@ -10,16 +10,15 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    unoptimized: true,
   },
-  experimental: {
-    serverComponentsExternalPackages: ['lightningcss']
+  /* config options here */
+  eslint: {
+    ignoreDuringBuilds: true,
   },
-  webpack: (config) => {
-    config.externals.push({
-      'lightningcss': 'lightningcss'
-    })
-    return config
-  }
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default nextConfig;

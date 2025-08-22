@@ -20,7 +20,7 @@ export interface OrderTableProps {
   data: ProductItem[];
   footer?: React.ReactNode;
 }
-export const headers = [
+export var headers = [
   { label: "ẢNH" },
   { label: "TÊN SẢN PHẨM" },
   { label: "GIÁ" },

@@ -15,16 +15,16 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Props {
     user: User | null;
     onSave: () => void;
-    onReload?: () => void; // Added to receive loadUsers
+    onCancel: () => void;
 }
 
-export default function UserForm({ user, onSave, onReload }: Props) {
+export default function UserForm({ user, onSave, onCancel }: Props) {
     const INITIAL_FORM_STATE: Omit<User, 'id'> = {
         email: '',
         password: '',
@@ -93,8 +93,7 @@ export default function UserForm({ user, onSave, onReload }: Props) {
                 });
             }
             setForm(INITIAL_FORM_STATE);
-            onReload?.(); // Call reload to refresh user list
-            onSave(); // Close form
+            onSave();
         } catch (error) {
             toast.error('Không thể lưu người dùng. Vui lòng thử lại.');
         } finally {
@@ -113,9 +112,19 @@ export default function UserForm({ user, onSave, onReload }: Props) {
     }, [user]);
 
     return (
-        <Card className="max-w-md mx-auto mt-8 mb-10">
+        <Card className="max-w-md mx-auto mt-8 mb-10 relative">
+            <Button
+                onClick={onCancel}
+                variant="ghost"
+                size="sm"
+                className="absolute right-2 top-2 h-8 w-8 p-0"
+            >
+                <X className="h-4 w-4" />
+            </Button>
             <CardHeader>
-                <CardTitle className="text-center text-2xl">{user ? 'Cập nhật người dùng' : 'Thêm người dùng'}</CardTitle>
+                <CardTitle className="text-center text-2xl">
+                    {user ? 'Cập nhật người dùng' : 'Thêm người dùng'}
+                </CardTitle>
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -229,13 +238,23 @@ export default function UserForm({ user, onSave, onReload }: Props) {
                         />
                     </div>
 
-                    <Button
-                        type="submit"
-                        className="w-full bg-blue-500 hover:bg-blue-600"
-                        disabled={isSubmitting || Object.keys(errors).length > 0}
-                    >
-                        {isSubmitting ? 'Đang lưu...' : user ? 'Cập nhật người dùng' : 'Thêm người dùng'}
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="flex-1"
+                            onClick={onCancel}
+                        >
+                            Hủy
+                        </Button>
+                        <Button
+                            type="submit"
+                            className="flex-1 bg-blue-500 hover:bg-blue-600"
+                            disabled={isSubmitting || Object.keys(errors).length > 0}
+                        >
+                            {isSubmitting ? 'Đang lưu...' : user ? 'Cập nhật' : 'Thêm mới'}
+                        </Button>
+                    </div>
                 </form>
             </CardContent>
         </Card>

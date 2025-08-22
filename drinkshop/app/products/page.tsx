@@ -1,51 +1,49 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
-import Image from "next/image"
-import Link from "next/link"
-import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent"
-import { products } from "@/lib/products"
-import { Product } from "@/lib/api"
-import styles from "./products.module.css"
-import CustomPagination from "@/components/pagination/CustomPagination"
-import ProductSidebar from "@/components/products/ProductSidebar"
-import ProductToolbar from "@/components/products/ProductToolbar"
-import ProductGrid from "@/components/products/ProductGrid"
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent";
+import { products } from "@/lib/products";
+import styles from "./products.module.css";
+import CustomPagination from "@/components/pagination/CustomPagination";
+import ProductSidebar from "@/components/products/ProductSidebar";
+import ProductToolbar from "@/components/products/ProductToolbar";
+import ProductGrid from "@/components/products/ProductGrid";
+import ProductCompareButton from "@/components/ProductCompareButton";
+import ProductEmptyState from "@/components/products/ProductEmptyState";
 
 export default function ProductsPage() {
-  const searchParams = useSearchParams()
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [sortBy, setSortBy] = useState<string>("default")
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const [searchQuery, setSearchQuery] = useState<string>("")
-  const [urlSearchQuery, setUrlSearchQuery] = useState<string>("") // Separate state for URL search
-  const itemsPerPage = 6
-  const convertedProducts: Product[] = products.map(product => ({
-    ...product,
-    id: product.id.toString() // Convert number to string
-  }))
+  const searchParams = useSearchParams();
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("default");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [urlSearchQuery, setUrlSearchQuery] = useState<string>(""); // Separate state for URL search
+  const itemsPerPage = 6;
+
   // Set category and search from URL params when component mounts
   useEffect(() => {
-    const categoryFromUrl = searchParams.get('category')
-    const searchFromUrl = searchParams.get('search')
+    const categoryFromUrl = searchParams.get("category");
+    const searchFromUrl = searchParams.get("search");
 
     if (categoryFromUrl) {
-      setSelectedCategory(decodeURIComponent(categoryFromUrl))
+      setSelectedCategory(decodeURIComponent(categoryFromUrl));
     }
 
     if (searchFromUrl) {
-      setUrlSearchQuery(decodeURIComponent(searchFromUrl)) // Set URL search but don't populate input
+      setUrlSearchQuery(decodeURIComponent(searchFromUrl)); // Set URL search but don't populate input
     } else {
-      setUrlSearchQuery("") // Clear URL search if no param
+      setUrlSearchQuery(""); // Clear URL search if no param
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   // Reset current page when search query or category changes
   useEffect(() => {
-    setCurrentPage(1)
-  }, [searchQuery, urlSearchQuery, selectedCategory])
+    setCurrentPage(1);
+  }, [searchQuery, urlSearchQuery, selectedCategory]);
 
   const categories = [
     { name: "Tất cả", value: "all", count: products.length },
@@ -59,7 +57,11 @@ export default function ProductsPage() {
       value: "Rượu Vang Trắng",
       count: products.filter((p) => p.category === "Rượu Vang Trắng").length,
     },
-    { name: "Champagne", value: "Champagne", count: products.filter((p) => p.category === "Champagne").length },
+    {
+      name: "Champagne",
+      value: "Champagne",
+      count: products.filter((p) => p.category === "Champagne").length,
+    },
     {
       name: "Rượu Vang Rosé",
       value: "Rượu Vang Rosé",
@@ -70,51 +72,67 @@ export default function ProductsPage() {
       value: "Rượu Vang Ngọt",
       count: products.filter((p) => p.category === "Rượu Vang Ngọt").length,
     },
-  ]
+  ];
 
-  const tags = ["Rượu Ngoại", "Tết", "Phụ kiện", "Cao cấp", "Giá tốt", "Ấn tượng", "Thơm ngon", "Tết mới", "Đặc biệt"]
+  const tags = [
+    "Rượu Ngoại",
+    "Tết",
+    "Phụ kiện",
+    "Cao cấp",
+    "Giá tốt",
+    "Ấn tượng",
+    "Thơm ngon",
+    "Tết mới",
+    "Đặc biệt",
+  ];
 
   // Filter and sort products
   let filteredProducts =
-    selectedCategory === "all" ? convertedProducts : convertedProducts.filter((product) => product.category === selectedCategory)
+    selectedCategory === "all"
+      ? products
+      : products.filter((product) => product.category === selectedCategory);
 
   // Apply search filter (combine both local search and URL search)
-  const activeSearchQuery = searchQuery.trim() || urlSearchQuery.trim()
+  const activeSearchQuery = searchQuery.trim() || urlSearchQuery.trim();
   if (activeSearchQuery !== "") {
-    filteredProducts = filteredProducts.filter((product) =>
-      product.name.toLowerCase().includes(activeSearchQuery.toLowerCase()) ||
-      product.description?.toLowerCase().includes(activeSearchQuery.toLowerCase())
-    )
+    filteredProducts = filteredProducts.filter(
+      (product) =>
+        product.name.toLowerCase().includes(activeSearchQuery.toLowerCase()) ||
+        product.description
+          ?.toLowerCase()
+          .includes(activeSearchQuery.toLowerCase())
+    );
   }
 
   // Sort products
   if (sortBy === "price-low") {
-    filteredProducts = [...filteredProducts].sort(
-      (a, b) => a.price - b.price
-    )
+    filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
   } else if (sortBy === "price-high") {
-    filteredProducts = [...filteredProducts].sort(
-      (a, b) => b.price - a.price
-    )
+    filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
   } else if (sortBy === "name") {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.name.localeCompare(b.name))
+    filteredProducts = [...filteredProducts].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
   }
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
-  const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   // Handle page change
   const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Prepare breadcrumb items
-  const breadcrumbItems: Array<{ label: string, href?: string }> = [
-    { label: "Trang chủ", href: "/" }
+  const breadcrumbItems: Array<{ label: string; href?: string }> = [
+    { label: "Trang chủ", href: "/" },
   ];
 
   if (selectedCategory !== "all") {
@@ -175,34 +193,12 @@ export default function ProductsPage() {
             {currentProducts.length > 0 ? (
               <ProductGrid products={currentProducts} viewMode={viewMode} />
             ) : (
-              <div className="text-center py-12">
-                <p className="text-lg text-gray-600 mb-4">
-                  {activeSearchQuery ? `Không tìm thấy sản phẩm nào cho "${activeSearchQuery}"` : "Không có sản phẩm nào"}
-                </p>
-                <p className="text-sm text-gray-500 mb-6">
-                  Thử tìm kiếm với từ khóa khác hoặc duyệt qua các danh mục khác.
-                </p>
-                <div className="flex gap-4 justify-center">
-                  {activeSearchQuery && (
-                    <button
-                      onClick={() => {
-                        setSearchQuery("");
-                        setUrlSearchQuery("");
-                        setCurrentPage(1);
-                      }}
-                      className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors"
-                    >
-                      Xóa bộ lọc tìm kiếm
-                    </button>
-                  )}
-                  <Link
-                    href="/products"
-                    className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
-                  >
-                    Xem tất cả sản phẩm
-                  </Link>
-                </div>
-              </div>
+              <ProductEmptyState
+                activeSearchQuery={activeSearchQuery}
+                setSearchQuery={setSearchQuery}
+                setUrlSearchQuery={setUrlSearchQuery}
+                setCurrentPage={setCurrentPage}
+              />
             )}
 
             {/* Pagination */}
@@ -214,7 +210,7 @@ export default function ProductsPage() {
           </div>
         </div>
       </div>
+      <ProductCompareButton />
     </div>
-  )
+  );
 }
-

@@ -6,7 +6,7 @@ import {
   ChevronDown,
   Heart,
   Menu,
-  Search,
+  Bell,
   ShoppingCart,
   User,
   X,
@@ -14,8 +14,13 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { use, useEffect, useState, useRef, useCallback } from "react";
 import { useCartStore } from "@/stores/cart.store";
+import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
+import NotificationsPopover from "@/components/notification/NotificationsPopover";
+import { useNotifications } from "@/hooks/useNotifications";
+import { useUserStore } from "@/stores/user.store";
+import styles from './MainNavbar.module.css';
 
 const menuItems = [
   {
@@ -84,6 +89,46 @@ const MainNavbar = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { cart } = useCartStore();
+  const { user } = useUserStore();
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    markAllAsSeen,
+    fetchNotifications,
+  } = useNotifications();
+
+  // Submenu hover state management
+  const [hoveredSubmenu, setHoveredSubmenu] = useState<string | null>(null);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleSubmenuEnter = useCallback((itemLabel: string) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setHoveredSubmenu(itemLabel);
+  }, []);
+
+  const handleSubmenuLeave = useCallback(() => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredSubmenu(null);
+    }, 150); // 150ms delay before hiding
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchNotifications(user.id);
+  }, [user, fetchNotifications]);
+
   return (
     <header className="bg-black text-white sticky top-0 z-50">
       <div className="container mx-auto px-4">
@@ -102,20 +147,32 @@ const MainNavbar = () => {
           {/* Desktop Navigation */}
           <nav className="hidden xl:flex items-center space-x-6 2xl:space-x-8">
             {menuItems.map((item) => (
-              <div key={item.label} className="relative group">
+              <div key={item.label} className="relative">
                 {item.submenu ? (
-                  <div className="relative">
-                    <button className="flex items-center space-x-1 hover:text-yellow-500 transition-colors text-sm 2xl:text-base">
+                  <div
+                    className={styles.submenuContainer}
+                    onMouseEnter={() => handleSubmenuEnter(item.label)}
+                    onMouseLeave={handleSubmenuLeave}
+                  >
+                    <button className={styles.submenuTrigger}>
                       <span>{item.label}</span>
                       <ChevronDown className="w-4 h-4" />
                     </button>
-                    <div className="absolute top-full left-0 mt-2 w-64 bg-white text-black shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                      <div className="py-2">
+                    {/* Bridge area to prevent gap issues */}
+                    <div className={styles.submenuBridge} />
+                    <div
+                      className={`${styles.submenuDropdown} ${hoveredSubmenu === item.label
+                        ? styles.visible
+                        : styles.hidden
+                        }`}
+                    >
+                      <div className={styles.submenuContent}>
                         {item.submenu.map((subItem) => (
                           <Link
                             key={subItem.label}
                             href={subItem.href}
-                            className="block px-4 py-2 hover:bg-gray-100 hover:text-yellow-600 text-sm"
+                            className={styles.submenuItem}
+                            onClick={() => setHoveredSubmenu(null)}
                           >
                             {subItem.label}
                           </Link>
@@ -126,7 +183,7 @@ const MainNavbar = () => {
                 ) : (
                   <Link
                     href={item.href}
-                    className="hover:text-yellow-500 transition-colors text-sm 2xl:text-base"
+                    className={styles.navLink}
                   >
                     {item.label}
                   </Link>
@@ -153,6 +210,35 @@ const MainNavbar = () => {
                 <User className="w-4 h-4 lg:w-5 lg:h-5" />
               </Button>
             </Link>
+            <div className="relative">
+              <Popover
+                onOpenChange={(open) => {
+                  if (!open) {
+                    markAllAsSeen();
+                  }
+                }}
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white hover:text-yellow-500"
+                  >
+                    <Bell className="w-4 h-4 lg:w-5 lg:h-5" />
+                  </Button>
+                </PopoverTrigger>
+                <NotificationsPopover
+                  unreadCount={unreadCount ?? 0}
+                  notifications={notifications ?? []}
+                  loading={loading ?? true}
+                />
+              </Popover>
+              {unreadCount > 0 && (
+                <Badge className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs">
+                  {unreadCount}
+                </Badge>
+              )}
+            </div>
             <Link href="/cart" className="relative">
               <Button
                 variant="ghost"
@@ -227,7 +313,7 @@ const MainNavbar = () => {
                 <span>Đăng nhập</span>
               </Link>
               <Link
-                href="/wishlist"
+                href="/account/wishlist"
                 className="flex items-center space-x-3 py-2 text-white hover:text-yellow-500"
                 onClick={() => setIsMenuOpen(false)}
               >

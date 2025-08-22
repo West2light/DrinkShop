@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/dist/client/link";
 import { fetchAddress } from "@/utils/api/address.api";
 import { Address } from "@/types/user.types";
+import { addNotification } from "@/utils/api/notification.api";
 
 const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
@@ -115,6 +116,12 @@ const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
     if (!order) return;
     try {
       await setStatusCancelOrder(order.id);
+      await addNotification(
+        order.userId,
+        "Đơn hàng đã được hủy",
+        `Đơn hàng ${order.id} đã được hủy thành công.`,
+        `/account/orders/${order.id}`
+      );
       toast.success("Đơn hàng đã được hủy.");
       setStatus("Đã hủy");
     } catch (error) {

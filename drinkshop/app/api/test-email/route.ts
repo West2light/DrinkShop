@@ -39,9 +39,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: `Test 2FA email sent to ${email}`,
-        messageId: typeof result === "object" && result && "messageId" in result
-          ? (result as { messageId: string }).messageId
-          : undefined,
+        messageId: (result as any).messageId,
         instructions: "Check your email inbox to view the email",
       });
     } else if (type === "reset") {
@@ -54,9 +52,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: `Test reset password email sent to ${email}`,
-        messageId: typeof result === "object" && result && "messageId" in result
-          ? (result as { messageId: string }).messageId
-          : undefined,
+        messageId: (result as any).messageId,
         instructions: "Check your email inbox to view the email",
       });
     } else {
