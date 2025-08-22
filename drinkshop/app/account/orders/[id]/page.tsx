@@ -1,5 +1,4 @@
 "use client";
-
 import Image from "next/image";
 import ModalReview from "@/components/review/ModalReview";
 import titleleftdark from "@/public/Image_Rudu/titleleft-dark.png";
@@ -12,7 +11,6 @@ import { useEffect, useState, useMemo, use } from "react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { setStatusCancelOrder } from "@/utils/api/order.api";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { useOrderDetails } from "@/hooks/useOrderDetails";
 import { ConfirmDialog } from "@/components/confirmdialog/ConfirmDialog";
 import { formatCurrency } from "@/utils/format.currency";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
@@ -24,17 +22,16 @@ import Link from "next/dist/client/link";
 import { fetchAddress } from "@/utils/api/address.api";
 import { Address } from "@/types/user.types";
 import { addNotification } from "@/utils/api/notification.api";
-
+import { useOrderDetails } from "@/hooks/useOrderDetails";
 const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
   const order = useOrder(id);
-  const orderDetails = useOrderDetails(id);
+  const { orderDetails } = useOrderDetails(order);
   const [status, setStatus] = useState("");
   const [isReviewed, setIsReviewed] = useState(false);
   const [open, setOpen] = useState(false);
   const [address, setAddress] = useState<Address | null>(null);
   const ready = useRequireAuth();
-
   useEffect(() => {
     const getAddress = async () => {
       if (order?.addressId) {
@@ -48,7 +45,6 @@ const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
     };
     getAddress();
   }, [order?.addressId]);
-
   const orderLabels = useMemo(() => {
     if (!order) return [];
     return [
@@ -73,7 +69,6 @@ const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
       },
     ];
   }, [order, status, address]);
-
   const orderDetailsItems: ProductItem[] = orderDetails.map((item) => ({
     id: item.id,
     product: item.product,
@@ -111,7 +106,6 @@ const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
       },
     ];
   }, [order]);
-
   const handleCancelOrder = async () => {
     if (!order) return;
     try {
@@ -139,12 +133,10 @@ const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
           { label: "Chi tiết đơn hàng" },
         ]}
       />
-
       <div className="my-6">
         <h1 className="text-2xl font-semibold mb-2">CHI TIẾT ĐƠN HÀNG</h1>
         <Image src={titleleftdark} alt="Underline" width={70} height={20} />
       </div>
-
       <div className="my-6">
         <h2 className="text-xl font-semibold mb-4">Thông tin đơn hàng</h2>
         <div className="grid grid-cols-2 gap-y-2 gap-x-6 mb-6">
@@ -186,23 +178,22 @@ const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
           }
         />
       </div>
-
       <div className="my-6">
         {(status === OrderStatus.PENDING ||
           status === OrderStatus.APPROVED) && (
-          <ConfirmDialog
-            title="Hủy đơn hàng"
-            description="Bạn có chắc chắn muốn hủy đơn hàng này không?"
-            confirmText="Có"
-            cancelText="Không"
-            onConfirm={handleCancelOrder}
-            trigger={
-              <Button className="bg-black hover:bg-[var(--ring)] text-white">
-                Hủy đơn hàng
-              </Button>
-            }
-          />
-        )}
+            <ConfirmDialog
+              title="Hủy đơn hàng"
+              description="Bạn có chắc chắn muốn hủy đơn hàng này không?"
+              confirmText="Có"
+              cancelText="Không"
+              onConfirm={handleCancelOrder}
+              trigger={
+                <Button className="bg-black hover:bg-[var(--ring)] text-white">
+                  Hủy đơn hàng
+                </Button>
+              }
+            />
+          )}
         {status === OrderStatus.COMPLETED && !isReviewed && (
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -235,5 +226,4 @@ const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
     </div>
   );
 };
-
 export default OrderDetailPage;

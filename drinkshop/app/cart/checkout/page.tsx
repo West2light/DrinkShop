@@ -51,7 +51,12 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
 
   const { addresses } = useAddress(userId!);
-
+  useEffect(() => {
+    if (ready && addresses !== null && addresses.length === 0) {
+      toast.error("Bạn cần có địa chỉ để đặt hàng");
+      router.push("/account/addresses");
+    }
+  }, [ready, addresses, router]);
   //const { cart, setCart, setIsChange } = useCartContext();
   const { cart, setCart, setIsChange } = useCartStore();
   const cartItems: ProductItem[] = useMemo(() => {
@@ -129,12 +134,12 @@ const CheckoutPage = () => {
       },
       ...(discount > 0
         ? [
-            {
-              label: "Giảm giá",
-              value: `-${formatCurrency(rawDiscount)}`,
-              class: "text-green-600",
-            },
-          ]
+          {
+            label: "Giảm giá",
+            value: `-${formatCurrency(rawDiscount)}`,
+            class: "text-green-600",
+          },
+        ]
         : []),
       {
         label: "Phí vận chuyển",

@@ -4,14 +4,12 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Address } from "@/types/user.types";
 import { useState } from "react";
-
 interface ModalAddressProps {
-  addresses: Address[];
+  addresses: Address[] | null;
   selectedAddress: Address | null;
   onClose: () => void;
   onSelect: (address: Address) => void;
 }
-
 const ModalAddress = ({
   addresses,
   selectedAddress,
@@ -19,15 +17,13 @@ const ModalAddress = ({
   onSelect,
 }: ModalAddressProps) => {
   const [selectedId, setSelectedId] = useState(selectedAddress?.id || "");
-
   const handleConfirm = () => {
-    const newAddress = addresses.find((addr) => addr.id === selectedId);
+    const newAddress = addresses?.find((addr) => addr.id === selectedId);
     if (newAddress) {
       onSelect(newAddress);
       onClose();
     }
   };
-
   return (
     <DialogContent>
       <DialogTitle>Chọn địa chỉ giao hàng</DialogTitle>
@@ -37,7 +33,7 @@ const ModalAddress = ({
           onValueChange={(value) => setSelectedId(value)}
           className="space-y-3 mt-4"
         >
-          {addresses.map((addr) => (
+          {addresses?.map((addr) => (
             <div
               key={addr.id}
               className="flex items-start gap-2 border rounded-md p-3"
@@ -72,5 +68,4 @@ const ModalAddress = ({
     </DialogContent>
   );
 };
-
 export default ModalAddress;

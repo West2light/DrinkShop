@@ -94,15 +94,15 @@ export default function ProductTable({
                                 {products.map((product) => (
                                     <TableRow key={product.id} className="hover:bg-gray-50">
                                         <TableCell>
-                                            <Image
-                                                src={getImageSrc(product.image)}
-                                                alt={product.name || 'Product image'}
-                                                width={40}
-                                                height={40}
-                                                className="object-cover rounded-md"
-                                                style={{ width: 'auto', height: 'auto' }}
-                                                priority={false}
-                                            />
+                                            <div className="w-16 h-16 relative overflow-hidden rounded-md border border-gray-200">
+                                                <Image
+                                                    src={getImageSrc(product.image)}
+                                                    alt={product.name || 'Product image'}
+                                                    fill
+                                                    className="object-cover"
+                                                    sizes="64px"
+                                                />
+                                            </div>
                                         </TableCell>
                                         <TableCell className="font-medium">{product.name}</TableCell>
                                         <TableCell>{getCategoryName(product.category)}</TableCell>

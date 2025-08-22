@@ -79,7 +79,7 @@ const TopNavbar = () => {
   };
 
   return (
-    <nav className="w-full bg-background border-b px-72">
+    <nav className="w-full bg-background border-b px-4 sm:px-6 lg:px-8 xl:px-16 2xl:px-72">
       <div className="flex justify-between items-center h-7 text-xs tracking-tight">
         <div className="flex items-center space-x-6 text-foreground">
           {commonNavItems.map((item) => (
@@ -122,6 +122,7 @@ const TopNavbar = () => {
               onClick={handleSearch}
             />
           </div>
+          <ThemeSwitcher />
         </div>
       </div>
     </nav>

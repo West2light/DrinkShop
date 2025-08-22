@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import { Address } from "@/types/user.types";
 import axios from "axios";
-
 export const useAddress = (userId: string) => {
-  const [addresses, setAddresses] = useState<Address[]>([]);
-
+  const [addresses, setAddresses] = useState<Address[] | null>(null);
   useEffect(() => {
     if (!userId) return;
-
     const fetchDefaultAddress = async () => {
       try {
         const response = await axios.get(
@@ -16,13 +13,10 @@ export const useAddress = (userId: string) => {
         setAddresses(response.data || []);
       } catch (error) {
         console.error("Error fetching address:", error);
+        setAddresses([]); // lỗi thì coi như rỗng
       }
     };
-
     fetchDefaultAddress();
   }, [userId]);
-
-  return {
-    addresses,
-  };
+  return { addresses };
 };

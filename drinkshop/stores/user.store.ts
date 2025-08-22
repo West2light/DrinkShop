@@ -6,51 +6,45 @@ import { toast } from "sonner";
 
 interface UserState {
   user: UserWithoutPassword | null;
+  isNextAuthUser: boolean; // Flag để biết user từ NextAuth hay legacy
   setUser: (user: UserWithoutPassword | null) => void;
   clearUser: () => Promise<void>;
-  initUser: () => void; // Load từ token khi vào web
-  initFromNextAuth: (session: any) => void; // Load từ NextAuth session
+  initUser: () => void;
+  initFromNextAuth: (session: any) => void;
+  isAuthenticated: () => boolean; // Helper method
 }
 
 export const useUserStore = create<UserState>((set, get) => ({
   user: null,
-
+  isNextAuthUser: false,
   setUser: (user: UserWithoutPassword | null) => {
-    set({ user });
+    set({ user, isNextAuthUser: false });
     if (user) {
       setToken(user);
     }
   },
-
   clearUser: async () => {
     removeToken();
-    set({ user: null });
-
-    // Also sign out from NextAuth if needed
+    set({ user: null, isNextAuthUser: false });
     try {
       await signOut({ redirect: false });
     } catch (error) {
-      toast.error("No NextAuth session to sign out from");
+      console.log("No NextAuth session to sign out from");
     }
   },
-
   initUser: () => {
     const userFromToken = getToken();
     if (userFromToken) {
-      set({ user: userFromToken });
+      set({ user: userFromToken, isNextAuthUser: false });
     }
   },
-
-  // NEW: Initialize from NextAuth session
   initFromNextAuth: (session: any) => {
     if (session?.user) {
       const currentUser = get().user;
-
-      // Prevent infinite updates by checking if user is already set
-      if (currentUser && currentUser.id === session.user.id) {
+      // Prevent infinite updates
+      if (currentUser && currentUser.id === session.user.id && get().isNextAuthUser) {
         return;
       }
-
       const nextAuthUser: UserWithoutPassword = {
         id: session.user.id,
         email: session.user.email!,
@@ -61,7 +55,13 @@ export const useUserStore = create<UserState>((set, get) => ({
         receiveNews: false,
         twoFactorEnabled: false,
       };
-      set({ user: nextAuthUser });
+      set({ user: nextAuthUser, isNextAuthUser: true });
+      // Cũng lưu vào token để cart có thể access
+      setToken(nextAuthUser);
     }
+  },
+  isAuthenticated: () => {
+    const state = get();
+    return state.user !== null;
   },
 }));

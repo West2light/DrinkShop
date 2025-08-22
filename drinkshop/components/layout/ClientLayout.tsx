@@ -38,7 +38,7 @@ function LayoutContent({ children }: ClientLayoutProps) {
     <>
       {!shouldHideHeaderFooter && <Header />}
       <Toaster position="top-right" richColors />
-      <div className={shouldHideHeaderFooter ? "" : "px-72"}>{children}</div>
+      <div className={shouldHideHeaderFooter ? "" : "px-4 sm:px-6 lg:px-8 xl:px-16 2xl:px-72"}>{children}</div>
       {!shouldHideHeaderFooter && <Footer />}
     </>
   );

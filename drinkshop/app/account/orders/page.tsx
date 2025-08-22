@@ -30,14 +30,13 @@ const OrdersPage = () => {
   const orders = useOrders(userId);
   const { addresses } = useAddress(userId);
   const address =
-    addresses.find((addr) => addr.isDefault) || addresses[0] || null;
+    addresses?.find((addr) => addr.isDefault) || addresses?.[0] || null;
 
   const customerInfo = [
     {
       icon: <User className="w-6 h-6 text-[var(--foreground)]" />,
       content: [
-        `${currentUser?.firstName ?? "First Name"} ${
-          currentUser?.lastName ?? "Last Name"
+        `${currentUser?.firstName ?? "First Name"} ${currentUser?.lastName ?? "Last Name"
         }`,
         currentUser?.email ?? "Email",
       ],
@@ -124,11 +123,10 @@ const OrdersPage = () => {
                 <div key={key} className="flex items-center">
                   <span
                     onClick={() => setStatus(key)}
-                    className={`${
-                      status === key
+                    className={`${status === key
                         ? "text-[var(--sidebar-foreground)]"
                         : "text-muted-foreground cursor-pointer hover:text-[var(--sidebar-foreground)]"
-                    }`}
+                      }`}
                   >
                     {value} ({statusCount[key]})
                   </span>

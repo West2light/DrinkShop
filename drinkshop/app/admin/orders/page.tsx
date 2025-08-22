@@ -18,6 +18,7 @@ import { Order, OrderStatus } from '@/types/order.types';
 const OrderManagement = () => {
     const [filterStatus, setFilterStatus] = useState<string>(ORDER_STATUS.ALL);
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
     const {
         orders,
@@ -30,12 +31,9 @@ const OrderManagement = () => {
     } = useOrderManagement();
 
     const {
-        selectedOrder,
         orderDetails,
-        isLoadingDetails,
-        openDetails,
-        closeDetails
-    } = useOrderDetails();
+        isLoadingDetails
+    } = useOrderDetails(selectedOrder);
 
     useEffect(() => {
         loadInitialData();
@@ -85,11 +83,15 @@ const OrderManagement = () => {
 
     const handleOpenDetails = async (order: Order) => {
         try {
-            await openDetails(order);
+            setSelectedOrder(order);
         } catch (error) {
             console.error('Error opening order details:', error);
             toast.error('Có lỗi xảy ra khi mở chi tiết đơn hàng');
         }
+    };
+
+    const handleCloseDetails = () => {
+        setSelectedOrder(null);
     };
 
     if (error) {
@@ -155,7 +157,7 @@ const OrderManagement = () => {
                     isLoadingDetails={isLoadingDetails}
                     usersMap={usersMap}
                     addressesMap={addressesMap}
-                    onClose={closeDetails}
+                    onClose={handleCloseDetails}
                 />
             )}
         </AdminPageLayout>

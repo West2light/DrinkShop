@@ -109,8 +109,7 @@ export const authOptions: NextAuthOptions = {
           let existingUser = null;
           try {
             const response = await fetch(
-              `${
-                process.env.NEXTAUTH_URL
+              `${process.env.NEXTAUTH_URL
               }/api/users/by-email/${encodeURIComponent(user.email!)}`
             );
             if (response.ok) {
@@ -157,8 +156,7 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "google" || account?.provider === "github") {
         try {
           const response = await fetch(
-            `${
-              process.env.NEXTAUTH_URL
+            `${process.env.NEXTAUTH_URL
             }/api/users/by-email/${encodeURIComponent(token.email!)}`
           );
 
@@ -170,8 +168,9 @@ export const authOptions: NextAuthOptions = {
               token.role = dbUser.role;
               token.id = dbUser.id;
             }
+
           }
-        } catch (error) {}
+        } catch (error) { }
       }
 
       return token;
@@ -200,3 +199,4 @@ export const authOptions: NextAuthOptions = {
 
   secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-development-only",
 };
+

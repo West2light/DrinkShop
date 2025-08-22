@@ -107,6 +107,28 @@
       "role": "customer",
       "receiveNews": true,
       "twoFactorEnabled": false
+    },
+    {
+      "id": "ec54",
+      "email": "quangdong010203@gmail.com",
+      "password": "oauth-user",
+      "firstName": "Dong",
+      "lastName": "Duong",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLaUpoDvjVQuxBhL1_3PWDo5qXk3AC_cV7oBMemlNwtsos2ZA=s96-c",
+      "role": "customer",
+      "receiveNews": false,
+      "twoFactorEnabled": false
+    },
+    {
+      "id": "1d6d",
+      "email": "duong.quang.dong@sun-asterisk.com",
+      "password": "oauth-user",
+      "firstName": "Duong",
+      "lastName": "Quang Dong",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLhy986aTTTW97d2NzqU8HWiDJQGyH2mOkst65ztsO-ZLzv5A=s96-c",
+      "role": "customer",
+      "receiveNews": false,
+      "twoFactorEnabled": false
     }
   ],
   "addresses": [
@@ -184,6 +206,19 @@
       "isDefault": true,
       "createdAt": "2024-05-20T16:45:00.000Z",
       "updatedAt": "2024-05-20T16:45:00.000Z"
+    },
+    {
+      "id": "7538",
+      "userId": "1d6d",
+      "firstName": "Đông",
+      "lastName": "Dương Quang ",
+      "company": "Hà Nội",
+      "address": "Định Công",
+      "city": "Hà Nội",
+      "country": "Việt Nam",
+      "zipCode": "0001",
+      "phone": "0123456789",
+      "isDefault": true
     }
   ],
   "slides": [
@@ -875,6 +910,66 @@
       "paymentMethod": "Thanh toán khi nhận hàng",
       "orderDate": "2025-08-19T11:29:22.719Z",
       "updatedAt": "2025-08-19T11:29:22.719Z"
+    },
+    {
+      "id": "5020",
+      "userId": "2",
+      "addressId": "1",
+      "status": "Đã đặt, chờ duyệt",
+      "store": "HÀ ĐÔNG",
+      "totalPrice": 765000,
+      "subtotal": 750000,
+      "totalItem": 1,
+      "shippingFee": 15000,
+      "discount": 0,
+      "paymentMethod": "Thanh toán khi nhận hàng",
+      "orderDate": "2025-08-26T02:52:44.615Z",
+      "updatedAt": "2025-08-26T02:52:44.615Z"
+    },
+    {
+      "id": "ee43",
+      "userId": "1d6d",
+      "addressId": "7538",
+      "status": "Đã đặt, chờ duyệt",
+      "store": "HÀ ĐÔNG",
+      "totalPrice": 1785000,
+      "subtotal": 1770000,
+      "totalItem": 2,
+      "shippingFee": 15000,
+      "discount": 0,
+      "paymentMethod": "Thanh toán khi nhận hàng",
+      "orderDate": "2025-08-26T03:12:34.832Z",
+      "updatedAt": "2025-08-26T03:12:34.832Z"
+    },
+    {
+      "id": "7109",
+      "userId": "2",
+      "addressId": "1",
+      "status": "Đã đặt, chờ duyệt",
+      "store": "HÀ ĐÔNG",
+      "totalPrice": 1285000,
+      "subtotal": 1270000,
+      "totalItem": 2,
+      "shippingFee": 15000,
+      "discount": 0,
+      "paymentMethod": "Thanh toán khi nhận hàng",
+      "orderDate": "2025-08-26T03:13:54.488Z",
+      "updatedAt": "2025-08-26T03:13:54.488Z"
+    },
+    {
+      "id": "e748",
+      "userId": "2",
+      "addressId": "1",
+      "status": "Đã đặt, chờ duyệt",
+      "store": "HÀ ĐÔNG",
+      "totalPrice": 1070000,
+      "subtotal": 1070000,
+      "totalItem": 2,
+      "shippingFee": 0,
+      "discount": 0,
+      "paymentMethod": "Thanh toán khi nhận hàng",
+      "orderDate": "2025-08-26T03:14:59.625Z",
+      "updatedAt": "2025-08-26T03:14:59.625Z"
     }
   ],
   "orderDetails": [
@@ -1648,41 +1743,210 @@
       "quantity": 1,
       "price": "680.000",
       "totalPrice": 680000
+    },
+    {
+      "id": "1ce6",
+      "orderId": "5020",
+      "productId": "11",
+      "product": {
+        "status": "active",
+        "reviewCount": 22,
+        "id": "11",
+        "name": "ADMIT ONE RED BLEND",
+        "price": 750000,
+        "originalPrice": 850000,
+        "image": "/Product/11.jpg",
+        "category": "Rượu Vang Đỏ",
+        "description": "Rượu vang đỏ blend hiện đại với thiết kế nhãn độc đáo. Hương vị cân bằng giữa các giống nho khác nhau tạo nên sự phức hợp thú vị.",
+        "rating": 4,
+        "reviews": 22,
+        "stock": 0,
+        "features": [
+          "Xuất xứ: Úc",
+          "Độ cồn: 14%",
+          "Dung tích: 750ml",
+          "Phong cách: Modern Blend"
+        ]
+      },
+      "quantity": 1,
+      "price": 750000,
+      "totalPrice": 750000
+    },
+    {
+      "id": "ca60",
+      "orderId": "ee43",
+      "productId": 6,
+      "product": {
+        "status": "active",
+        "reviewCount": 35,
+        "id": 6,
+        "name": "TORELLO BRUT RESERVA",
+        "price": 920000,
+        "image": "/Product/6.jpg",
+        "category": "Champagne",
+        "description": "Champagne Brut Reserva với chất lượng cao cấp, bọt khí tinh tế và hương vị cân bằng hoàn hảo.",
+        "rating": 5,
+        "reviews": 35,
+        "stock": 100,
+        "features": [
+          "Xuất xứ: Tây Ban Nha",
+          "Độ cồn: 12%",
+          "Dung tích: 750ml",
+          "Thời gian ủ: 24 tháng"
+        ]
+      },
+      "quantity": 1,
+      "price": 920000,
+      "totalPrice": 920000
+    },
+    {
+      "id": "2860",
+      "orderId": "ee43",
+      "productId": 5,
+      "product": {
+        "status": "active",
+        "reviewCount": 27,
+        "id": 5,
+        "name": "TORELLO MARC",
+        "price": 850000,
+        "image": "/Product/5.jpg",
+        "category": "Champagne",
+        "description": "Champagne cao cấp với bọt khí mịn màng và hương vị phức tạp. Được ủ lâu để tạo nên độ tinh tế đặc biệt.",
+        "rating": 5,
+        "reviews": 27,
+        "stock": 100,
+        "features": [
+          "Xuất xứ: Tây Ban Nha",
+          "Độ cồn: 12%",
+          "Dung tích: 750ml",
+          "Phương pháp: Méthode Champenoise"
+        ]
+      },
+      "quantity": 1,
+      "price": 850000,
+      "totalPrice": 850000
+    },
+    {
+      "id": "84e6",
+      "orderId": "7109",
+      "productId": "11",
+      "product": {
+        "status": "active",
+        "reviewCount": 22,
+        "id": "11",
+        "name": "ADMIT ONE RED BLEND",
+        "price": 750000,
+        "originalPrice": 850000,
+        "image": "/Product/11.jpg",
+        "category": "Rượu Vang Đỏ",
+        "description": "Rượu vang đỏ blend hiện đại với thiết kế nhãn độc đáo. Hương vị cân bằng giữa các giống nho khác nhau tạo nên sự phức hợp thú vị.",
+        "rating": 4,
+        "reviews": 22,
+        "stock": 0,
+        "features": [
+          "Xuất xứ: Úc",
+          "Độ cồn: 14%",
+          "Dung tích: 750ml",
+          "Phong cách: Modern Blend"
+        ]
+      },
+      "quantity": 1,
+      "price": 750000,
+      "totalPrice": 750000
+    },
+    {
+      "id": "ae47",
+      "orderId": "7109",
+      "productId": "12",
+      "product": {
+        "status": "active",
+        "reviewCount": 28,
+        "id": "12",
+        "name": "EL GUAPO RED WINE",
+        "price": 520000,
+        "originalPrice": 580000,
+        "image": "/Product/12.jpg",
+        "category": "Rượu Vang Đỏ",
+        "description": "Rượu vang đỏ với thiết kế nhãn nghệ thuật đầy màu sắc, thể hiện tinh thần vui tươi và sáng tạo. Hương vị trái cây đậm đà.",
+        "rating": 4,
+        "reviews": 28,
+        "stock": 0,
+        "features": [
+          "Xuất xứ: Argentina",
+          "Độ cồn: 13.5%",
+          "Dung tích: 750ml",
+          "Phong cách: Artistic"
+        ]
+      },
+      "quantity": 1,
+      "price": 520000,
+      "totalPrice": 520000
+    },
+    {
+      "id": "29dd",
+      "orderId": "e748",
+      "productId": 3,
+      "product": {
+        "status": "active",
+        "reviewCount": 31,
+        "id": 3,
+        "name": "TORELLO MOSAICS 05",
+        "price": 590000,
+        "originalPrice": 650000,
+        "image": "/Product/3.jpg",
+        "category": "Rượu Vang Trắng",
+        "description": "Rượu vang trắng với thiết kế nhãn hiện đại, hương vị tươi mát và cân bằng. Phù hợp với hải sản và món ăn nhẹ.",
+        "rating": 4,
+        "reviews": 31,
+        "stock": 100,
+        "features": [
+          "Xuất xứ: Tây Ban Nha",
+          "Độ cồn: 12.5%",
+          "Dung tích: 750ml",
+          "Phong cách: Hiện đại"
+        ]
+      },
+      "quantity": 1,
+      "price": 590000,
+      "totalPrice": 590000
+    },
+    {
+      "id": "83b4",
+      "orderId": "e748",
+      "productId": 13,
+      "product": {
+        "status": "active",
+        "reviewCount": 17,
+        "id": 13,
+        "name": "IT SHOULD BE RIESLING",
+        "price": 480000,
+        "originalPrice": 540000,
+        "image": "/Product/13.jpg",
+        "category": "Rượu Vang Trắng",
+        "description": "Rượu vang trắng Riesling với hương vị tươi mát và độ chua cân bằng. Thiết kế nhãn tối giản nhưng ấn tượng.",
+        "rating": 4,
+        "reviews": 17,
+        "stock": 100,
+        "features": [
+          "Xuất xứ: Đức",
+          "Độ cồn: 12%",
+          "Dung tích: 750ml",
+          "Giống nho: Riesling"
+        ]
+      },
+      "quantity": 1,
+      "price": 480000,
+      "totalPrice": 480000
     }
   ],
   "carts": [
     {
       "id": "1",
       "userId": "2",
-      "items": [
-        {
-          "productId": "11",
-          "product": {
-            "status": "active",
-            "reviewCount": 22,
-            "id": "11",
-            "name": "ADMIT ONE RED BLEND",
-            "price": 750000,
-            "originalPrice": 850000,
-            "image": "/Product/11.jpg",
-            "category": "Rượu Vang Đỏ",
-            "description": "Rượu vang đỏ blend hiện đại với thiết kế nhãn độc đáo. Hương vị cân bằng giữa các giống nho khác nhau tạo nên sự phức hợp thú vị.",
-            "rating": 4,
-            "reviews": 22,
-            "stock": 0,
-            "features": [
-              "Xuất xứ: Úc",
-              "Độ cồn: 14%",
-              "Dung tích: 750ml",
-              "Phong cách: Modern Blend"
-            ]
-          },
-          "quantity": 1
-        }
-      ],
-      "totalPrice": 750000,
+      "items": [],
+      "totalPrice": 0,
       "createdAt": "2024-02-15T08:30:00.000Z",
-      "updatedAt": "2025-08-22T02:58:02.902Z"
+      "updatedAt": "2025-08-26T03:14:48.489Z"
     },
     {
       "id": "2",
@@ -1762,6 +2026,14 @@
       "totalPrice": 0,
       "createdAt": "2025-08-18T07:06:13.975Z",
       "updatedAt": "2025-08-18T07:06:13.975Z"
+    },
+    {
+      "id": "3ad5",
+      "userId": "1d6d",
+      "items": [],
+      "totalPrice": 0,
+      "createdAt": "2025-08-26T03:11:23.332Z",
+      "updatedAt": "2025-08-26T03:44:31.298Z"
     }
   ],
   "vouchers": [
@@ -2165,6 +2437,42 @@
       "isSeen": true,
       "createdAt": "2025-08-21T03:09:30.802Z",
       "link": "/orders/13d0"
+    },
+    {
+      "id": "042c",
+      "userId": "2",
+      "title": "Đặt hàng thành công",
+      "message": "Đơn hàng #5020",
+      "isSeen": true,
+      "createdAt": "2025-08-26T02:52:44.646Z",
+      "link": "/account/orders/5020"
+    },
+    {
+      "id": "b7a7",
+      "userId": "1d6d",
+      "title": "Đặt hàng thành công",
+      "message": "Đơn hàng #ee43",
+      "isSeen": true,
+      "createdAt": "2025-08-26T03:12:34.867Z",
+      "link": "/account/orders/ee43"
+    },
+    {
+      "id": "b5d8",
+      "userId": "2",
+      "title": "Đặt hàng thành công",
+      "message": "Đơn hàng #7109",
+      "isSeen": false,
+      "createdAt": "2025-08-26T03:13:54.525Z",
+      "link": "/account/orders/7109"
+    },
+    {
+      "id": "35fb",
+      "userId": "2",
+      "title": "Đặt hàng thành công",
+      "message": "Đơn hàng #e748",
+      "isSeen": false,
+      "createdAt": "2025-08-26T03:14:59.645Z",
+      "link": "/account/orders/e748"
     }
   ]
 }
