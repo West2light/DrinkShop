@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,7 +25,9 @@ const BreadcrumbComponent = ({ items }: BreadcrumbComponentProps) => {
           <div key={index} className="flex items-center">
             <BreadcrumbItem>
               {item.href ? (
-                <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+                <BreadcrumbLink asChild>
+                  <Link href={item.href}>{item.label}</Link>
+                </BreadcrumbLink>
               ) : (
                 <BreadcrumbPage className="text-[var(--chart-5)]">
                   {item.label}

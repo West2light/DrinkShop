@@ -31,6 +31,8 @@ export default function ProductsPage() {
 
     if (categoryFromUrl) {
       setSelectedCategory(decodeURIComponent(categoryFromUrl));
+    } else {
+      setSelectedCategory("all"); // Reset to "all" when no category param
     }
 
     if (searchFromUrl) {
@@ -148,7 +150,7 @@ export default function ProductsPage() {
     <div className="min-h-screen bg-white">
       {/* Breadcrumb */}
       <div className="bg-gray-50 py-4">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto">
           <BreadcrumbComponent items={breadcrumbItems} />
         </div>
       </div>
@@ -164,7 +166,7 @@ export default function ProductsPage() {
         />
       </div>
 
-      <div className="container mx-auto px-4 py-6 lg:py-8">
+      <div className="container mx-auto py-6 lg:py-8">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Sidebar */}
           <ProductSidebar

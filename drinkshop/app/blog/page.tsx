@@ -20,7 +20,7 @@ export default async function BlogPage() {
         <div className="flex flex-col min-h-screen bg-white blog-page">
             {/* Breadcrumb */}
             <div className="bg-gray-50 py-4 w-full">
-                <div className="container mx-auto px-4">
+                <div className="container mx-auto">
                     <BreadcrumbComponent
                         items={[
                             { label: "Trang chủ", href: "/" },
@@ -30,7 +30,7 @@ export default async function BlogPage() {
                 </div>
             </div>
 
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto">
                 <h2 className="text-lg font-bold mb-4 mt-4">
                     BLOG
                     <Image
@@ -44,7 +44,7 @@ export default async function BlogPage() {
 
             {/* Hero Section */}
             <div className="w-full flex-1">
-                <div className="container mx-auto px-4">
+                <div className="container mx-auto">
                     <div className="relative rounded-lg overflow-hidden">
                         <Image
                             src="/Image_Rudu/slide-1.jpg"
@@ -57,7 +57,7 @@ export default async function BlogPage() {
                 </div>
 
 
-                <div className="container mx-auto px-4 py-6 lg:py-8">
+                <div className="container mx-auto py-6 lg:py-8">
                     <div className="text-center mb-8 lg:mb-12">
                         <h2 className="text-2xl lg:text-3xl font-bold mb-4">TIN TỨC & BÀI VIẾT</h2>
                         <Image

@@ -15,6 +15,7 @@ import BestSellersSection from "@/components/sections/BestSellersSection";
 import BlogSection from "@/components/sections/BlogSection";
 import TestimonialSection from "@/components/sections/TestimonialSection";
 import ProductCompareButton from "@/components/ProductCompareButton";
+import HeroSlider from "@/components/products/HeroSlider";
 
 export default async function HomePage() {
   // Fetch data in parallel
@@ -39,6 +40,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <HeroSlider />
       <AboutSection about={about} />
       <FeaturedProductSection product={featured} />
       <NewProductsSection products={newProducts} />

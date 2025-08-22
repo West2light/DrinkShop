@@ -50,7 +50,7 @@ const socialIcons = [
 const Footer = () => {
   return (
     <footer>
-      <div className="px-72 w-full flex flex-col items-center space-y-12 py-6">
+      <div className="px-4 sm:px-6 lg:px-8 xl:px-16 2xl:px-72 w-full flex flex-col items-center space-y-12 py-6">
         <div className="w-full h-42 grid grid-cols-3 border-b-2 border-gray-200">
           {footerLogos.map((logo, index) => (
             <div
@@ -137,7 +137,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="flex items-center justify-between border-t font-sans">
-        <div className="flex items-center justify-between px-72 w-full flex-nowrap text-nowrap">
+        <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-16 2xl:px-72 w-full flex-nowrap text-nowrap">
           <span className="text-xs text-gray-500">
             &copy; Copyright 2008-2014 DKT Technology JSC
           </span>

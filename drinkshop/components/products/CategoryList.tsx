@@ -23,8 +23,8 @@ export default function CategoryList({ categories, selectedCategory, onSelectCat
                 <Image
                     src="/Image_Rudu/titleleft-dark.png"
                     alt="arrow-trang-tri"
-                    width={16}
-                    height={16}
+                    width={65}
+                    height={65}
                 />
             </h3>
 
@@ -36,8 +36,8 @@ export default function CategoryList({ categories, selectedCategory, onSelectCat
                             size="sm"
                             onClick={() => onSelectCategory(category.value)}
                             className={`w-full flex justify-between p-1 h-auto font-normal ${selectedCategory === category.value
-                                    ? "text-yellow-600 font-medium"
-                                    : "text-gray-600"
+                                ? "text-yellow-600 font-medium"
+                                : "text-gray-600"
                                 }`}
                         >
                             <span>{category.name}</span>

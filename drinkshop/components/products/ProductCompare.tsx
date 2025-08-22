@@ -10,8 +10,8 @@ export default function ProductCompare() {
         <Image
           src="/Image_Rudu/titleleft-dark.png"
           alt="arrow-trang-tri"
-          width={16}
-          height={16}
+          width={65}
+          height={65}
         />
       </h3>
       <div className="map">
